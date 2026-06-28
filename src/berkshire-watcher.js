@@ -283,12 +283,16 @@ async function formatAlert(alert) {
   const newsSummary = cleanNewsText(event.summary, event.source);
   const translatedTitle = await translateNewsText(newsTitle);
   const translatedSummary = await translateNewsText(newsSummary);
-  const summary = isSameNewsText(translatedTitle, translatedSummary) ? '' : translatedSummary;
+  const summary = !translatedSummary || isSameNewsText(translatedTitle, translatedSummary)
+    ? fallbackSummary(alert)
+    : translatedSummary;
 
   return [
     `${icon} T${score} · ${escapeHtml(title)} · ${directionLabel} · ${action}`,
     '',
-    `<b>이슈</b>\n${escapeHtml(translatedTitle)}${summary ? `\n${escapeHtml(summary)}` : ''}`,
+    `<b>제목</b>\n${escapeHtml(translatedTitle)}`,
+    '',
+    `<b>내용</b>\n${escapeHtml(summary)}`,
     '',
     `<b>분석요인</b>\n${formatAnalysisFactors(alert.matches || {})}`,
     '',
@@ -306,6 +310,18 @@ async function formatAlert(alert) {
     '',
     `<b>출처</b>\n${formatEventSource(event, alert.matches?.source)}`,
   ].join('\n');
+}
+
+function fallbackSummary(alert) {
+  const { item, event, matches } = alert;
+  const factors = [
+    ...(matches?.positive || []),
+    ...(matches?.negative || []),
+    ...(matches?.themes || []),
+  ].slice(0, 3);
+  const factorText = factors.length ? `${factors.join(', ')} 요인과 연결됩니다` : `${item.ticker} 감시 쿼리에서 잡힌 이슈입니다`;
+  const queryText = event.query ? ` 감시 쿼리: ${event.query}.` : '';
+  return `RSS에 본문 요약이 없어 제목 기준으로 판단합니다. ${factorText}.${queryText}`;
 }
 
 async function translateNewsText(text) {
