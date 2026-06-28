@@ -79,6 +79,116 @@
         "why": "투자자 관점 해설"
       }
     ],
+    "ai_infrastructure": [
+      {
+        "name": "SemiAnalysis",
+        "domain": "semianalysis.com",
+        "tier": 2,
+        "why": "AI 인프라/반도체 공급망 심층 분석"
+      },
+      {
+        "name": "Data Center Dynamics",
+        "domain": "datacenterdynamics.com",
+        "tier": 2,
+        "why": "데이터센터 전력/냉각/인프라 흐름 확인"
+      },
+      {
+        "name": "The Next Platform",
+        "domain": "nextplatform.com",
+        "tier": 2,
+        "why": "AI 서버/HPC 인프라 전문 해설"
+      },
+      {
+        "name": "TrendForce",
+        "domain": "trendforce.com",
+        "tier": 2,
+        "why": "메모리/반도체/디스플레이 공급망 데이터"
+      }
+    ],
+    "semiconductors": [
+      {
+        "name": "SemiAnalysis",
+        "domain": "semianalysis.com",
+        "tier": 2,
+        "why": "반도체/AI 가속기 공급망 분석"
+      },
+      {
+        "name": "TrendForce",
+        "domain": "trendforce.com",
+        "tier": 2,
+        "why": "메모리/HBM/반도체 가격과 공급 데이터"
+      },
+      {
+        "name": "DigiTimes",
+        "domain": "digitimes.com",
+        "tier": 2,
+        "why": "대만 반도체 공급망 전문 매체"
+      },
+      {
+        "name": "AnandTech",
+        "domain": "anandtech.com",
+        "tier": 2,
+        "why": "칩 아키텍처/제품 해설"
+      }
+    ],
+    "crypto_fintech": [
+      {
+        "name": "CFTC",
+        "domain": "cftc.gov",
+        "tier": 1,
+        "why": "파생상품/예측시장 규제 공식 출처"
+      },
+      {
+        "name": "Federal Reserve",
+        "domain": "federalreserve.gov",
+        "tier": 1,
+        "why": "금리/금융규제 공식 출처"
+      },
+      {
+        "name": "CoinDesk",
+        "domain": "coindesk.com",
+        "tier": 2,
+        "why": "크립토 시장/규제 전문 매체"
+      },
+      {
+        "name": "The Block",
+        "domain": "theblock.co",
+        "tier": 2,
+        "why": "크립토 거래량/시장 구조 전문"
+      }
+    ],
+    "healthcare_pharma": [
+      {
+        "name": "FDA",
+        "domain": "fda.gov",
+        "tier": 1,
+        "why": "의약품 승인/안전성 공식 출처"
+      },
+      {
+        "name": "ClinicalTrials.gov",
+        "domain": "clinicaltrials.gov",
+        "tier": 1,
+        "why": "임상시험 공식 등록 데이터"
+      },
+      {
+        "name": "STAT",
+        "domain": "statnews.com",
+        "tier": 2,
+        "why": "바이오/헬스케어 전문 보도"
+      },
+      {
+        "name": "Fierce Pharma",
+        "domain": "fiercepharma.com",
+        "tier": 2,
+        "why": "제약 산업/상업화 전문 매체"
+      },
+      {
+        "name": "BioPharma Dive",
+        "domain": "biopharmadive.com",
+        "tier": 2,
+        "why": "제약 파이프라인/규제/시장 해설"
+      }
+    ],
     "critical_minerals": [
       {
         "name": "Mining.com",
@@ -159,4 +269,3 @@
     ]
   }
 }
-

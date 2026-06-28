@@ -1,157 +1,686 @@
 {
   "items": [
     {
-      "ticker": "MP",
-      "name": "MP Materials",
-      "status": "watching",
+      "ticker": "GOOG",
+      "name": "Alphabet",
+      "status": "holding",
       "portfolios": [
         "전체",
-        "전략광물",
-        "고위험성장"
+        "AI",
+        "빅테크",
+        "성장주"
       ],
-      "sector": "Materials",
-      "subsector": "Rare Earths & Critical Minerals",
-      "strategy": "growth",
-      "risk_bucket": "high",
+      "sector": "Communication Services",
+      "subsector": "Internet Content & Information / AI Cloud",
+      "strategy": "quality_growth",
+      "risk_bucket": "medium",
       "themes": [
-        "rare earths",
-        "critical minerals",
-        "permanent magnets",
-        "defense supply chain",
-        "EV motors"
+        "search advertising",
+        "AI search",
+        "Gemini",
+        "Google Cloud",
+        "TPU",
+        "YouTube",
+        "antitrust"
       ],
       "sector_cycle": {
-        "why": "MP는 개별 회사 뉴스보다 소재/전략광물 섹터 자금 흐름, 중국 리스크, 방산/EV 수요 순환에 크게 흔들릴 수 있습니다.",
+        "why": "GOOG는 광고 경기, AI 검색 전환, 클라우드 투자 사이클, 반독점 규제에 같이 흔들립니다.",
         "positive": [
-          "원자재/소재 섹터가 시장 대비 강함",
-          "전략광물/희토류 ETF가 동반 상승",
-          "방산/EV 공급망 뉴스가 같은 방향으로 움직임"
+          "디지털 광고와 클라우드 지출이 회복",
+          "AI 검색이 검색 광고 매출을 잠식하지 않고 붙음",
+          "빅테크 규제 리스크가 완화"
         ],
         "negative": [
-          "소재 섹터가 시장 대비 약함",
-          "희토류 가격과 관련 ETF가 같이 하락",
-          "성장주/고변동성 종목에서 자금이 빠짐"
+          "광고 경기 둔화",
+          "AI 답변이 검색 클릭과 광고 단가를 압박",
+          "DOJ/반독점 판결이 사업 구조를 흔듦"
         ],
         "watch": [
-          "Materials sector relative strength",
-          "REMX trend",
-          "defense and EV supply chain headlines"
+          "digital advertising growth",
+          "Google Cloud growth",
+          "AI search monetization",
+          "DOJ antitrust remedies"
         ]
       },
       "source_groups": [
         "official_filings",
         "market_news",
-        "critical_minerals",
-        "defense_supply_chain",
-        "ev_supply_chain"
+        "ai_infrastructure"
       ],
       "trusted_sources": [
         {
-          "name": "MP Materials Investor Relations",
-          "domain": "investors.mpmaterials.com",
+          "name": "Alphabet Investor Relations",
+          "domain": "abc.xyz",
           "tier": 1,
           "why": "회사 공식 발표/IR"
+        },
+        {
+          "name": "Google Investor Relations",
+          "domain": "investor.google.com",
+          "tier": 1,
+          "why": "회사 공식 실적/발표"
         }
       ],
-      "why_it_matters": "MP는 중국 밖 희토류 공급망에 베팅하는 종목입니다. 회사 자체 뉴스가 아니어도 중국 수출통제, 미국 핵심광물 정책, 영구자석 수요 변화가 곧바로 투자 판단에 연결됩니다.",
+      "why_it_matters": "GOOG의 핵심은 검색 광고 현금창출력이 AI 전환 뒤에도 유지되는지입니다. Gemini, TPU, Google Cloud가 방어력을 키우면 긍정이고, 반독점이나 AI 검색 잠식이 커지면 투자 논리를 다시 봐야 합니다.",
       "watch_queries": [
         {
-          "query": "China rare earth export controls",
-          "why": "중국 공급망 압박이 커지는지 확인"
+          "query": "Alphabet Gemini AI search advertising",
+          "why": "AI 검색이 검색 광고와 충돌하는지 확인"
         },
         {
-          "query": "US Department of Defense rare earth critical minerals",
-          "why": "희토류가 국가안보 공급망으로 더 강하게 인정받는지 확인"
+          "query": "Google Cloud growth backlog TPU capex",
+          "why": "클라우드와 자체 AI 인프라가 이익으로 이어지는지 확인"
         },
         {
-          "query": "MP Materials magnet ramp",
-          "why": "MP가 단순 광산에서 정제/자석 밸류체인으로 올라가는지 확인"
+          "query": "Google DOJ antitrust Chrome Android remedies",
+          "why": "반독점 판결이 사업 구조를 흔드는지 확인"
         },
         {
-          "query": "NdPr oxide price rare earth",
-          "why": "희토류 핵심 가격 흐름 확인"
+          "query": "YouTube advertising Alphabet earnings",
+          "why": "광고 경기와 YouTube 성장성을 확인"
         }
       ],
       "positive_triggers": [
-        "export controls",
-        "defense funding",
-        "critical minerals funding",
-        "magnet ramp",
-        "long-term supply agreement"
+        "Gemini adoption",
+        "Google Cloud growth",
+        "AI search monetization",
+        "advertising growth",
+        "share repurchase",
+        "TPU"
       ],
       "negative_triggers": [
-        "ramp delay",
-        "rare earth prices fall",
-        "export controls eased",
-        "contract cancellation"
+        "antitrust",
+        "breakup",
+        "search share loss",
+        "capex pressure",
+        "AI overview traffic decline",
+        "ad slowdown"
       ],
       "chain": [
         {
-          "from": "중국 수출통제",
-          "to": "희토류/자석 소재 공급 불안",
-          "why": "중국이 공급을 조이면 하류 업체는 중국 밖 공급처를 찾게 됩니다."
+          "from": "AI 검색 확산",
+          "to": "검색 클릭/광고 단가 변화",
+          "why": "사용자가 링크를 덜 누르면 기존 검색 광고 모델이 압박받고, 광고를 잘 붙이면 방어력이 확인됩니다."
         },
         {
-          "from": "희토류/자석 소재 공급 불안",
-          "to": "EV/풍력/방산/로봇 원가와 조달 리스크",
-          "why": "영구자석은 전기모터와 정밀무기에 들어가서 하류 산업의 병목이 될 수 있습니다."
+          "from": "TPU와 자체 모델",
+          "to": "AI 원가 구조와 클라우드 경쟁력",
+          "why": "자체 칩과 모델이 강하면 외부 GPU 의존도를 낮추고 Google Cloud 마진 방어에 도움이 됩니다."
         },
         {
-          "from": "미국 핵심광물 지원",
-          "to": "중국 밖 공급망 프리미엄",
-          "why": "보조금이나 장기계약이 붙으면 MP 같은 비중국 공급자의 하방 안정성이 좋아질 수 있습니다."
+          "from": "반독점 판결",
+          "to": "검색/브라우저/앱스토어 유통력",
+          "why": "Chrome, Android, 기본 검색 계약이 흔들리면 트래픽 획득 비용과 검색 점유율이 바뀔 수 있습니다."
         }
       ],
       "related_tickers": [
         {
-          "ticker": "LYC.AX",
-          "name": "Lynas Rare Earths",
-          "tradingview_symbol": "ASX-LYC",
-          "why": "MP와 가장 직접 비교되는 중국 밖 희토류 공급자입니다."
+          "ticker": "MSFT",
+          "name": "Microsoft",
+          "tradingview_symbol": "NASDAQ-MSFT",
+          "why": "AI 검색과 클라우드에서 가장 직접적인 경쟁자입니다."
         },
         {
-          "ticker": "REMX",
-          "name": "VanEck Rare Earth/Strategic Metals ETF",
-          "tradingview_symbol": "AMEX-REMX",
-          "why": "희토류/전략광물 섹터 전체 심리를 보기 좋습니다."
+          "ticker": "META",
+          "name": "Meta Platforms",
+          "tradingview_symbol": "NASDAQ-META",
+          "why": "디지털 광고 경기와 AI 추천/광고 효율을 같이 봐야 합니다."
         },
         {
-          "ticker": "TSLA",
-          "name": "Tesla",
-          "tradingview_symbol": "NASDAQ-TSLA",
-          "why": "EV 모터와 공급망 비용 부담을 받는 하류 업체입니다."
+          "ticker": "AMZN",
+          "name": "Amazon",
+          "tradingview_symbol": "NASDAQ-AMZN",
+          "why": "클라우드와 광고 사업에서 GOOG와 겹치는 축입니다."
         },
         {
-          "ticker": "LMT",
-          "name": "Lockheed Martin",
-          "tradingview_symbol": "NYSE-LMT",
-          "why": "방산 수요 쪽 연결고리입니다. 정밀무기 수요가 커지면 희토류 전략성이 커집니다."
+          "ticker": "NVDA",
+          "name": "NVIDIA",
+          "tradingview_symbol": "NASDAQ-NVDA",
+          "why": "AI 인프라 수요와 빅테크 capex 흐름을 같이 보여줍니다."
         },
         {
-          "ticker": "NOC",
-          "name": "Northrop Grumman",
-          "tradingview_symbol": "NYSE-NOC",
-          "why": "방산 공급망 관점에서 같이 볼 수 있는 하류 수요 종목입니다."
+          "ticker": "TTD",
+          "name": "The Trade Desk",
+          "tradingview_symbol": "NASDAQ-TTD",
+          "why": "오픈 인터넷 광고 경기와 광고 예산 흐름을 확인하기 좋습니다."
         }
       ],
       "key_indicators": [
         {
-          "name": "NdPr 가격",
-          "why": "희토류 핵심 가격 지표입니다.",
-          "positive": "오르면 MP 매출/마진 기대에는 긍정입니다.",
-          "negative": "너무 급등하면 하류 업체 수요 둔화 리스크도 같이 생깁니다."
+          "name": "검색 광고 성장률",
+          "why": "GOOG의 핵심 현금창출원이 AI 전환 뒤에도 버티는지 보는 지표입니다.",
+          "positive": "성장률이 유지되면 AI 검색 전환 우려가 줄어듭니다.",
+          "negative": "둔화가 크면 AI 답변/경쟁/광고 경기 중 무엇이 원인인지 분해해야 합니다."
         },
         {
-          "name": "중국 희토류 수출량",
-          "why": "공급망 압박을 보는 지표입니다.",
-          "positive": "줄어들면 중국 밖 공급망 가치가 올라갈 수 있습니다.",
-          "negative": "다시 늘어나면 MP 프리미엄이 약해질 수 있습니다."
+          "name": "Google Cloud 매출/영업이익",
+          "why": "AI 인프라 투자가 실제 사업 성과로 연결되는지 확인합니다.",
+          "positive": "매출 성장과 이익률이 같이 좋아지면 긍정입니다.",
+          "negative": "매출은 늘어도 이익률이 꺾이면 capex 부담을 의심해야 합니다."
         },
         {
-          "name": "MP 정제/자석 ramp 일정",
-          "why": "MP가 단순 광산 회사에서 고부가 공급망 회사로 올라가는지 보는 핵심입니다.",
-          "positive": "일정대로 진행되고 고객 계약이 붙으면 긍정입니다.",
-          "negative": "지연되면 투자 논리의 질이 낮아집니다."
+          "name": "반독점 구제안",
+          "why": "검색 기본값, Chrome, Android가 흔들리면 트래픽과 사업 구조가 바뀝니다.",
+          "positive": "벌금 수준이나 제한적 조치면 불확실성이 줄어듭니다.",
+          "negative": "사업 분리나 기본 검색 계약 제한이면 다시 고려해야 합니다."
+        }
+      ]
+    },
+    {
+      "ticker": "HOOD",
+      "name": "Robinhood",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "핀테크",
+        "크립토",
+        "고위험성장"
+      ],
+      "sector": "Financial Services",
+      "subsector": "Capital Markets / Retail Brokerage / Crypto",
+      "strategy": "high_growth",
+      "risk_bucket": "high",
+      "themes": [
+        "retail brokerage",
+        "crypto trading",
+        "options trading",
+        "net interest income",
+        "prediction markets",
+        "payment for order flow"
+      ],
+      "sector_cycle": {
+        "why": "HOOD는 회사 실행력도 중요하지만 개인투자자 위험선호, 크립토 거래량, 금리, 규제 사이클에 크게 반응합니다.",
+        "positive": [
+          "크립토/주식 거래대금 증가",
+          "순입금과 예탁자산 증가",
+          "규제 리스크 완화"
+        ],
+        "negative": [
+          "개인투자자 거래량 감소",
+          "PFOF/옵션/크립토 규제 강화",
+          "금리 하락으로 이자수익 둔화"
+        ],
+        "watch": [
+          "crypto trading volume",
+          "retail trading activity",
+          "net deposits",
+          "payment for order flow regulation"
+        ]
+      },
+      "source_groups": [
+        "official_filings",
+        "market_news",
+        "crypto_fintech"
+      ],
+      "trusted_sources": [
+        {
+          "name": "Robinhood Investor Relations",
+          "domain": "investors.robinhood.com",
+          "tier": 1,
+          "why": "회사 공식 발표/IR"
+        }
+      ],
+      "why_it_matters": "HOOD는 단순 증권사가 아니라 개인투자자 위험선호와 크립토 사이클에 레버리지된 플랫폼입니다. 거래량, 예탁자산, 규제가 좋아지면 강하고, 거래 열기가 식거나 규제가 강해지면 빠르게 약해질 수 있습니다.",
+      "watch_queries": [
+        {
+          "query": "Robinhood crypto trading volume",
+          "why": "크립토 사이클이 HOOD 거래수익으로 이어지는지 확인"
+        },
+        {
+          "query": "Robinhood net deposits assets under custody",
+          "why": "일회성 거래가 아니라 자산 플랫폼으로 커지는지 확인"
+        },
+        {
+          "query": "Robinhood payment for order flow SEC regulation",
+          "why": "핵심 수익원 규제 리스크를 확인"
+        },
+        {
+          "query": "Robinhood prediction markets regulation",
+          "why": "신규 성장축이 규제에 막히는지 확인"
+        }
+      ],
+      "positive_triggers": [
+        "crypto volume",
+        "net deposits",
+        "assets under custody",
+        "Gold subscribers",
+        "international expansion",
+        "trading volume"
+      ],
+      "negative_triggers": [
+        "SEC enforcement",
+        "payment for order flow ban",
+        "crypto crackdown",
+        "trading volume decline",
+        "outage",
+        "regulatory probe"
+      ],
+      "chain": [
+        {
+          "from": "크립토/밈주식 위험선호",
+          "to": "거래량과 거래수익",
+          "why": "개인투자자가 다시 활발해지면 HOOD의 거래 기반 매출이 빠르게 좋아질 수 있습니다."
+        },
+        {
+          "from": "금리 변화",
+          "to": "순이자수익",
+          "why": "고객 현금과 증권대여에서 나오는 이자성 수익은 금리 수준에 민감합니다."
+        },
+        {
+          "from": "PFOF/크립토 규제",
+          "to": "수익 모델 안정성",
+          "why": "규제가 강해지면 거래수익과 신규 상품 확장이 동시에 압박받을 수 있습니다."
+        }
+      ],
+      "related_tickers": [
+        {
+          "ticker": "COIN",
+          "name": "Coinbase",
+          "tradingview_symbol": "NASDAQ-COIN",
+          "why": "크립토 거래량과 규제 민감도를 같이 보여주는 대표 비교 종목입니다."
+        },
+        {
+          "ticker": "IBKR",
+          "name": "Interactive Brokers",
+          "tradingview_symbol": "NASDAQ-IBKR",
+          "why": "브로커리지 사업의 질과 거래 환경을 비교하기 좋습니다."
+        },
+        {
+          "ticker": "SCHW",
+          "name": "Charles Schwab",
+          "tradingview_symbol": "NYSE-SCHW",
+          "why": "전통 브로커리지/자산 플랫폼과 금리 민감도를 같이 봅니다."
+        },
+        {
+          "ticker": "MSTR",
+          "name": "MicroStrategy",
+          "tradingview_symbol": "NASDAQ-MSTR",
+          "why": "크립토 위험선호가 강해질 때 같이 움직이는 종목입니다."
+        },
+        {
+          "ticker": "CME",
+          "name": "CME Group",
+          "tradingview_symbol": "NASDAQ-CME",
+          "why": "파생상품 거래량과 시장 변동성 축을 확인할 수 있습니다."
+        }
+      ],
+      "key_indicators": [
+        {
+          "name": "크립토/옵션 거래량",
+          "why": "HOOD 거래수익의 민감도가 큰 핵심 데이터입니다.",
+          "positive": "거래량이 늘면 수익 레버리지가 커질 수 있습니다.",
+          "negative": "거래량이 줄면 성장주 프리미엄이 약해질 수 있습니다."
+        },
+        {
+          "name": "예탁자산과 순입금",
+          "why": "단기 거래앱이 아니라 장기 금융 플랫폼이 되는지 확인합니다.",
+          "positive": "순입금과 AUC가 꾸준히 늘면 질 좋은 성장입니다.",
+          "negative": "사용자는 많아도 자산이 안 쌓이면 수익 안정성이 낮습니다."
+        },
+        {
+          "name": "PFOF/크립토 규제",
+          "why": "수익 모델 자체를 바꿀 수 있는 리스크입니다.",
+          "positive": "규제 불확실성이 완화되면 멀티플 부담이 줄어듭니다.",
+          "negative": "금지/벌금/상품 제한이 나오면 다시 고려해야 합니다."
+        }
+      ]
+    },
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "AI",
+        "반도체",
+        "성장주"
+      ],
+      "sector": "Technology",
+      "subsector": "Semiconductors / AI Accelerators",
+      "strategy": "compounder_growth",
+      "risk_bucket": "medium_high",
+      "themes": [
+        "AI GPU",
+        "data center",
+        "Blackwell",
+        "CUDA",
+        "HBM",
+        "CoWoS",
+        "inference",
+        "export controls"
+      ],
+      "sector_cycle": {
+        "why": "NVDA는 AI capex 사이클, 데이터센터 투자, HBM/패키징 병목, 수출통제에 동시에 민감합니다.",
+        "positive": [
+          "하이퍼스케일러 capex 상향",
+          "Blackwell 수요와 공급 확대",
+          "데이터센터 매출과 마진 동반 개선"
+        ],
+        "negative": [
+          "AI capex 소화 국면",
+          "고객사 자체 ASIC 전환",
+          "중국 수출통제 강화"
+        ],
+        "watch": [
+          "hyperscaler capex",
+          "data center revenue",
+          "HBM supply",
+          "CoWoS capacity",
+          "China export controls"
+        ]
+      },
+      "source_groups": [
+        "official_filings",
+        "market_news",
+        "semiconductors",
+        "ai_infrastructure"
+      ],
+      "trusted_sources": [
+        {
+          "name": "NVIDIA Newsroom",
+          "domain": "nvidianews.nvidia.com",
+          "tier": 1,
+          "why": "회사 공식 발표"
+        },
+        {
+          "name": "NVIDIA Investor Relations",
+          "domain": "investor.nvidia.com",
+          "tier": 1,
+          "why": "회사 공식 실적/IR"
+        }
+      ],
+      "why_it_matters": "NVDA는 AI 인프라 체인의 병목에 가까운 종목입니다. 고객 capex, GPU/네트워킹 수요, HBM/CoWoS 공급, 수출통제가 같은 방향이면 강하지만, capex 과열이나 자체칩 전환 신호가 커지면 다시 봐야 합니다.",
+      "watch_queries": [
+        {
+          "query": "Nvidia Blackwell demand gross margin",
+          "why": "차세대 GPU 수요와 마진 지속성을 확인"
+        },
+        {
+          "query": "Nvidia data center revenue HBM CoWoS",
+          "why": "AI 데이터센터 매출과 공급 병목을 확인"
+        },
+        {
+          "query": "Nvidia export controls China",
+          "why": "중국 매출과 지정학 리스크를 확인"
+        },
+        {
+          "query": "AI capex hyperscalers Nvidia",
+          "why": "빅테크 투자 사이클이 계속 강한지 확인"
+        }
+      ],
+      "positive_triggers": [
+        "Blackwell demand",
+        "data center revenue",
+        "gross margin",
+        "supply allocation",
+        "CUDA",
+        "hyperscaler capex"
+      ],
+      "negative_triggers": [
+        "export controls",
+        "gross margin decline",
+        "custom ASIC",
+        "capex slowdown",
+        "supply constraint",
+        "China restrictions"
+      ],
+      "chain": [
+        {
+          "from": "하이퍼스케일러 AI capex",
+          "to": "GPU/네트워킹 수요",
+          "why": "MSFT, AMZN, GOOG, META가 투자를 늘리면 NVDA 데이터센터 매출의 가시성이 높아집니다."
+        },
+        {
+          "from": "HBM/CoWoS 공급",
+          "to": "출하량과 마진",
+          "why": "메모리와 패키징이 부족하면 수요가 있어도 매출 인식이 늦어지고 비용 구조가 흔들릴 수 있습니다."
+        },
+        {
+          "from": "고객사 자체 ASIC",
+          "to": "장기 경쟁 강도",
+          "why": "빅테크가 자체칩 비중을 높이면 일부 워크로드에서 NVDA 의존도가 낮아질 수 있습니다."
+        },
+        {
+          "from": "미중 수출통제",
+          "to": "중국 매출과 제품 믹스",
+          "why": "규제가 강해질수록 중국용 제품 설계와 매출 안정성이 흔들립니다."
+        }
+      ],
+      "related_tickers": [
+        {
+          "ticker": "AMD",
+          "name": "Advanced Micro Devices",
+          "tradingview_symbol": "NASDAQ-AMD",
+          "why": "AI GPU의 가장 직접적인 경쟁자입니다."
+        },
+        {
+          "ticker": "AVGO",
+          "name": "Broadcom",
+          "tradingview_symbol": "NASDAQ-AVGO",
+          "why": "AI 네트워킹과 고객 맞춤 ASIC 흐름을 같이 봐야 합니다."
+        },
+        {
+          "ticker": "TSM",
+          "name": "Taiwan Semiconductor",
+          "tradingview_symbol": "NYSE-TSM",
+          "why": "NVDA 칩 생산과 첨단 공정 공급망의 핵심입니다."
+        },
+        {
+          "ticker": "MU",
+          "name": "Micron",
+          "tradingview_symbol": "NASDAQ-MU",
+          "why": "HBM 공급과 AI 메모리 사이클을 확인하기 좋습니다."
+        },
+        {
+          "ticker": "ASML",
+          "name": "ASML",
+          "tradingview_symbol": "NASDAQ-ASML",
+          "why": "첨단 반도체 장비와 장기 공급능력을 보여줍니다."
+        },
+        {
+          "ticker": "VRT",
+          "name": "Vertiv",
+          "tradingview_symbol": "NYSE-VRT",
+          "why": "AI 데이터센터 전력/냉각 인프라 수요를 같이 확인합니다."
+        }
+      ],
+      "key_indicators": [
+        {
+          "name": "데이터센터 매출과 가이던스",
+          "why": "AI 수요가 실제 실적으로 이어지는 가장 직접적인 지표입니다.",
+          "positive": "성장과 가이던스가 계속 상향되면 강한 홀드 신호입니다.",
+          "negative": "가이던스가 꺾이면 AI capex 소화 국면을 의심해야 합니다."
+        },
+        {
+          "name": "총마진",
+          "why": "공급 부족 프리미엄과 제품 믹스의 질을 보여줍니다.",
+          "positive": "높은 마진이 유지되면 가격결정력이 살아있다는 뜻입니다.",
+          "negative": "마진이 꺾이면 경쟁, 원가, 제품 전환 비용을 확인해야 합니다."
+        },
+        {
+          "name": "HBM/CoWoS 공급",
+          "why": "GPU 수요가 매출로 바뀌려면 메모리와 패키징 병목이 풀려야 합니다.",
+          "positive": "공급 확대가 확인되면 출하와 매출 가시성이 좋아집니다.",
+          "negative": "병목이 지속되면 실적 인식이 늦고 고객 대기 시간이 길어집니다."
+        }
+      ]
+    },
+    {
+      "ticker": "LLY",
+      "name": "Eli Lilly",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "헬스케어",
+        "비만치료제",
+        "성장주"
+      ],
+      "sector": "Healthcare",
+      "subsector": "Drug Manufacturers / GLP-1 / Obesity & Diabetes",
+      "strategy": "quality_growth",
+      "risk_bucket": "medium",
+      "themes": [
+        "GLP-1",
+        "obesity",
+        "diabetes",
+        "tirzepatide",
+        "Zepbound",
+        "Mounjaro",
+        "pipeline",
+        "drug pricing"
+      ],
+      "sector_cycle": {
+        "why": "LLY는 GLP-1 수요, 생산능력, 보험/정부 가격정책, 임상 파이프라인 사이클에 민감합니다.",
+        "positive": [
+          "Zepbound/Mounjaro 수요와 생산능력 확대",
+          "보험 커버리지 확대",
+          "후속 파이프라인 임상 성공"
+        ],
+        "negative": [
+          "안전성 이슈",
+          "가격 인하/보험 제한",
+          "경쟁사 데이터 개선"
+        ],
+        "watch": [
+          "GLP-1 demand",
+          "obesity drug coverage",
+          "manufacturing capacity",
+          "FDA approval",
+          "Medicare pricing"
+        ]
+      },
+      "source_groups": [
+        "official_filings",
+        "market_news",
+        "healthcare_pharma"
+      ],
+      "trusted_sources": [
+        {
+          "name": "Eli Lilly Investor Relations",
+          "domain": "investor.lilly.com",
+          "tier": 1,
+          "why": "회사 공식 발표/IR"
+        },
+        {
+          "name": "FDA",
+          "domain": "fda.gov",
+          "tier": 1,
+          "why": "의약품 승인/안전성 공식 출처"
+        },
+        {
+          "name": "ClinicalTrials.gov",
+          "domain": "clinicaltrials.gov",
+          "tier": 1,
+          "why": "임상시험 공식 등록 데이터"
+        }
+      ],
+      "why_it_matters": "LLY의 핵심은 GLP-1 비만/당뇨 치료제가 거대한 수요를 얼마나 오래, 얼마나 높은 마진으로 흡수하느냐입니다. 생산능력과 커버리지가 열리면 긍정이고, 가격정책/안전성/경쟁 데이터가 나빠지면 다시 봐야 합니다.",
+      "watch_queries": [
+        {
+          "query": "Eli Lilly Zepbound supply capacity",
+          "why": "수요를 실제 매출로 바꿀 생산능력을 확인"
+        },
+        {
+          "query": "Mounjaro Zepbound GLP-1 market share",
+          "why": "비만/당뇨 시장 점유율 흐름을 확인"
+        },
+        {
+          "query": "Eli Lilly FDA obesity diabetes pipeline",
+          "why": "승인과 후속 파이프라인 변화를 확인"
+        },
+        {
+          "query": "GLP-1 Medicare pricing Lilly",
+          "why": "가격정책과 보험 커버리지 리스크를 확인"
+        }
+      ],
+      "positive_triggers": [
+        "Zepbound sales",
+        "Mounjaro sales",
+        "capacity expansion",
+        "FDA approval",
+        "pipeline data",
+        "coverage expansion"
+      ],
+      "negative_triggers": [
+        "safety signal",
+        "pricing pressure",
+        "Medicare negotiation",
+        "supply shortage",
+        "competition",
+        "trial failure"
+      ],
+      "chain": [
+        {
+          "from": "비만/당뇨 유병률",
+          "to": "GLP-1 장기 수요",
+          "why": "치료 대상 인구가 크기 때문에 커버리지와 생산능력이 열리면 매출 규모가 커질 수 있습니다."
+        },
+        {
+          "from": "생산능력 증설",
+          "to": "Zepbound/Mounjaro 매출",
+          "why": "수요가 있어도 공급이 부족하면 매출이 제한됩니다. 증설은 실적 상향의 직접 요인입니다."
+        },
+        {
+          "from": "보험/정부 가격정책",
+          "to": "접근성과 마진",
+          "why": "커버리지가 넓어지면 수요는 커지지만, 가격 압박이 세면 마진 기대가 낮아질 수 있습니다."
+        },
+        {
+          "from": "경쟁사 임상 데이터",
+          "to": "시장점유율과 멀티플",
+          "why": "더 편하거나 효과 좋은 약이 나오면 LLY의 성장 프리미엄이 조정될 수 있습니다."
+        }
+      ],
+      "related_tickers": [
+        {
+          "ticker": "NVO",
+          "name": "Novo Nordisk",
+          "tradingview_symbol": "NYSE-NVO",
+          "why": "GLP-1 비만/당뇨 시장의 가장 직접적인 경쟁자입니다."
+        },
+        {
+          "ticker": "AMGN",
+          "name": "Amgen",
+          "tradingview_symbol": "NASDAQ-AMGN",
+          "why": "비만 치료제 후속 경쟁 파이프라인을 확인해야 합니다."
+        },
+        {
+          "ticker": "PFE",
+          "name": "Pfizer",
+          "tradingview_symbol": "NYSE-PFE",
+          "why": "대형 제약사의 비만/대사질환 경쟁과 M&A 흐름을 봅니다."
+        },
+        {
+          "ticker": "MRK",
+          "name": "Merck",
+          "tradingview_symbol": "NYSE-MRK",
+          "why": "대형 제약 섹터 자금 흐름과 파이프라인 평가를 비교합니다."
+        },
+        {
+          "ticker": "HIMS",
+          "name": "Hims & Hers",
+          "tradingview_symbol": "NYSE-HIMS",
+          "why": "비만치료제 접근성/가격 민감 소비자 수요를 간접적으로 보여줍니다."
+        }
+      ],
+      "key_indicators": [
+        {
+          "name": "Zepbound/Mounjaro 매출",
+          "why": "LLY 성장 프리미엄의 핵심 실적 지표입니다.",
+          "positive": "매출이 예상보다 빠르게 늘면 보유 고려 신호가 강해집니다.",
+          "negative": "성장이 둔화되면 공급, 가격, 경쟁 중 원인을 확인해야 합니다."
+        },
+        {
+          "name": "생산능력과 공급 상태",
+          "why": "수요가 매출로 전환되는 병목입니다.",
+          "positive": "공급 부족이 풀리면 실적 상향 여지가 생깁니다.",
+          "negative": "부족이 길어지면 점유율과 환자 유지에 부담입니다."
+        },
+        {
+          "name": "보험 커버리지/약가 정책",
+          "why": "시장 크기와 마진을 동시에 결정합니다.",
+          "positive": "커버리지가 넓어지면 접근성이 좋아지고 수요가 커집니다.",
+          "negative": "약가 인하나 제한적 커버리지는 매출/마진 기대를 낮춥니다."
         }
       ]
     }

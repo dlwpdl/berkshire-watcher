@@ -1,12 +1,11 @@
 [
   {
-    "portfolioTicker": "MP",
-    "title": "China tightens rare earth export license reviews as US expands critical minerals support",
-    "summary": "Export controls and defense-linked funding headlines are pushing investors to revisit non-China rare earth supply chains.",
+    "portfolioTicker": "NVDA",
+    "title": "Nvidia says new export controls may limit China data center sales",
+    "summary": "The company said restrictions could affect AI accelerator demand in China while US hyperscaler demand remains strong.",
     "source": "Sample News",
-    "url": "https://example.com/rare-earth-sample",
+    "url": "https://example.com/nvidia-export-controls-sample",
     "publishedAt": "2026-06-28T00:00:00Z",
-    "query": "China rare earth export controls"
+    "query": "Nvidia export controls China"
   }
 ]
-
