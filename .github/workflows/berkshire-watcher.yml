@@ -2,7 +2,10 @@ name: Berkshire Watcher
 
 on:
   schedule:
-    - cron: "0 22 * * 1-5"
+    # KST 08:00 = UTC 23:00 (전날)
+    - cron: "0 23 * * *"
+    # KST 20:00 = UTC 11:00
+    - cron: "0 11 * * *"
   workflow_dispatch:
 
 jobs:

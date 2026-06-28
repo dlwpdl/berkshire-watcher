@@ -29,7 +29,16 @@ npm run send
 1. Telegram에서 ai-berkshire/berkshire-watcher 전용 Codex 세션에 자연어로 요청합니다.
 2. Codex가 `data/portfolio.json`을 수정합니다.
 3. Codex가 commit/push합니다.
-4. GitHub Actions가 매일 `portfolio.json`을 읽고 알림을 보냅니다.
+4. GitHub Actions가 하루 두 번 `portfolio.json`을 읽고 알림을 보냅니다.
+
+## Schedule
+
+GitHub Actions runs twice daily at 08:00 and 20:00 KST:
+
+```text
+0 23 * * *  # UTC, previous day
+0 11 * * *  # UTC
+```
 
 예:
 
