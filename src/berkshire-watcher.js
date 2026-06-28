@@ -188,20 +188,20 @@ function analyzeItem(item, events, sources) {
     event: top.event,
     score: top.score,
     direction: top.direction,
-    action: actionFor(item, top.score, top.direction),
+    action: actionFor(item, top.score, top.direction, top.matches),
     matches: top.matches,
   };
 }
 
 function eventMatchesItem(event, item) {
-  const text = normalize(`${event.title} ${event.summary} ${event.query || ''}`);
+  const text = normalize(eventContentText(event));
   return [item.ticker, item.name, ...(item.themes || [])]
     .filter(Boolean)
     .some(value => text.includes(normalize(value)));
 }
 
 function scoreEvent(item, event, sources) {
-  const text = normalize(`${event.title} ${event.summary} ${event.query || ''}`);
+  const text = normalize(eventContentText(event));
   const positiveMatches = matchList(item.positive_triggers || [], text);
   const negativeMatches = matchList(item.negative_triggers || [], text);
   const themeMatches = (item.themes || []).filter(theme => text.includes(normalize(theme)));
@@ -211,6 +211,7 @@ function scoreEvent(item, event, sources) {
   const directMatch = [item.ticker, item.name].filter(Boolean).some(value => text.includes(normalize(value)));
   const queryMatch = event.query ? 1 : 0;
   const source = event.querySource || findKnownSource(event, item, sources);
+  const quality = contentQuality(event);
 
   let score = 1 + queryMatch;
   if (directMatch) score += 3;
@@ -220,10 +221,13 @@ function scoreEvent(item, event, sources) {
   score += source?.tier === 1 ? 2 : source?.tier === 2 ? 1 : 0;
 
   const direction = classifyDirection(positiveMatches.length, negativeMatches.length);
+  const cappedScore = quality === 'title_only'
+    ? Math.min(score, source ? 6 : 5)
+    : score;
 
   return {
     event,
-    score: Math.min(10, score),
+    score: Math.min(10, cappedScore),
     direction,
     matches: {
       positive: positiveMatches,
@@ -231,8 +235,22 @@ function scoreEvent(item, event, sources) {
       themes: themeMatches,
       sectors: sectorMatches,
       source,
+      content: quality,
     },
   };
+}
+
+function eventContentText(event) {
+  const title = cleanNewsText(event.title, event.source);
+  const summary = cleanNewsText(event.summary, event.source);
+  return isSameNewsText(title, summary) ? title : `${title} ${summary}`;
+}
+
+function contentQuality(event) {
+  const title = cleanNewsText(event.title, event.source);
+  const summary = cleanNewsText(event.summary, event.source);
+  if (!summary || isSameNewsText(title, summary)) return 'title_only';
+  return 'rss_summary';
 }
 
 function findKnownSource(event, item, sources) {
@@ -262,7 +280,8 @@ function classifyDirection(positiveCount, negativeCount) {
   return 'unknown';
 }
 
-function actionFor(item, score, direction) {
+function actionFor(item, score, direction, matches = {}) {
+  if (matches.content === 'title_only') return '원문 확인';
   if (direction === 'negative' && score >= 9) return '위험 신호';
   if (direction === 'negative' && score >= 7) return '다시 고려';
   if (direction === 'negative') return '주의';
@@ -360,6 +379,8 @@ function formatAnalysisFactors(matches) {
   if (matches.themes?.length) lines.push(`- 테마: ${escapeHtml(matches.themes.slice(0, 3).join(' / '))}`);
   if (matches.sectors?.length) lines.push(`- 섹터: ${escapeHtml(matches.sectors.slice(0, 2).join(' / '))}`);
   if (matches.source?.name) lines.push(`- 출처신뢰: ${escapeHtml(matches.source.name)} tier ${escapeHtml(matches.source.tier || '?')}`);
+  if (matches.content === 'title_only') lines.push('- 본문: 제목 중심이라 원문 확인 필요');
+  if (matches.content === 'rss_summary') lines.push('- 본문: RSS 요약 반영');
   return lines.length ? lines.join('\n') : '- 직접 트리거보다는 등록된 감시 쿼리/출처 신뢰도로 잡힌 이슈입니다.';
 }
 
