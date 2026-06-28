@@ -1,18 +1,20 @@
 import fs from 'node:fs/promises';
 
 const DEFAULT_PORTFOLIO = 'data/portfolio.json';
+const DEFAULT_SOURCES = 'data/sources.json';
 const MAX_MESSAGE_LENGTH = 3900;
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const portfolio = await readJson(args.portfolio || DEFAULT_PORTFOLIO);
+  const sources = await readOptionalJson(args.sources || DEFAULT_SOURCES, { groups: {} });
   const events = args.events
     ? await readJson(args.events)
-    : await collectEvents(portfolio.items || []);
+    : await collectEvents(portfolio.items || [], sources);
 
   const alerts = (portfolio.items || [])
     .filter(item => item.status !== 'paused')
-    .map(item => analyzeItem(item, events))
+    .map(item => analyzeItem(item, events, sources))
     .filter(Boolean)
     .sort((a, b) => b.score - a.score);
 
@@ -34,6 +36,7 @@ function parseArgs(args) {
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === '--dry-run') parsed.dryRun = true;
     else if (args[i] === '--portfolio') parsed.portfolio = args[++i];
+    else if (args[i] === '--sources') parsed.sources = args[++i];
     else if (args[i] === '--events') parsed.events = args[++i];
   }
   return parsed;
@@ -43,11 +46,20 @@ async function readJson(path) {
   return JSON.parse(await fs.readFile(path, 'utf8'));
 }
 
-async function collectEvents(items) {
+async function readOptionalJson(path, fallback) {
+  try {
+    return await readJson(path);
+  } catch (error) {
+    if (error.code === 'ENOENT') return fallback;
+    throw error;
+  }
+}
+
+async function collectEvents(items, sources) {
   const all = [];
 
   for (const item of items.filter(item => item.status !== 'paused')) {
-    const queries = buildQueries(item).slice(0, 6);
+    const queries = buildQueries(item, sources).slice(0, Number(process.env.MAX_QUERIES_PER_ITEM || 12));
     for (const query of queries) {
       const events = await fetchGoogleNews(query.query);
       all.push(...events.map(event => ({
@@ -55,6 +67,7 @@ async function collectEvents(items) {
         portfolioTicker: item.ticker,
         query: query.query,
         queryWhy: query.why,
+        querySource: query.source || null,
       })));
       await sleep(300);
     }
@@ -63,12 +76,32 @@ async function collectEvents(items) {
   return dedupeEvents(all).slice(0, 80);
 }
 
-function buildQueries(item) {
+function buildQueries(item, sources) {
   const manual = Array.isArray(item.watch_queries) ? item.watch_queries : [];
   const fallback = [item.ticker, item.name, ...(item.themes || [])]
     .filter(Boolean)
     .map(query => ({ query, why: '기본 감시 쿼리' }));
-  return uniqueBy([...manual, ...fallback], entry => entry.query.toLowerCase());
+  const sourceQueries = buildSourceQueries(item, manual, sources);
+  return uniqueBy([...manual, ...sourceQueries, ...fallback], entry => entry.query.toLowerCase());
+}
+
+function buildSourceQueries(item, manualQueries, sources) {
+  const baseQueries = manualQueries.slice(0, 2);
+  const selectedSources = sourcesForItem(item, sources)
+    .filter(source => source.domain)
+    .slice(0, Number(process.env.MAX_SOURCE_FILTERS || 5));
+
+  return selectedSources.flatMap(source => baseQueries.map(query => ({
+    query: `${query.query} site:${source.domain}`,
+    why: `${query.why} · ${source.name} 기준`,
+    source,
+  })));
+}
+
+function sourcesForItem(item, sources) {
+  const groups = item.source_groups || sources.default_groups || [];
+  const grouped = groups.flatMap(group => sources.groups?.[group] || []);
+  return uniqueBy([...(item.trusted_sources || []), ...grouped], source => `${source.domain || source.name}`.toLowerCase());
 }
 
 async function fetchGoogleNews(query) {
@@ -96,6 +129,8 @@ function parseRss(xml) {
       title: decodeXml(extractXml(block, 'title')),
       summary: stripHtml(decodeXml(extractXml(block, 'description'))),
       source: decodeXml(extractXml(block, 'source')) || 'Google News',
+      sourceUrl: decodeXml(extractXmlAttr(block, 'source', 'url')),
+      sourceDomain: domainFromUrl(decodeXml(extractXmlAttr(block, 'source', 'url'))),
       url: decodeXml(extractXml(block, 'link')),
       publishedAt: decodeXml(extractXml(block, 'pubDate')),
     });
@@ -104,10 +139,10 @@ function parseRss(xml) {
   return items;
 }
 
-function analyzeItem(item, events) {
+function analyzeItem(item, events, sources) {
   const scored = events
     .filter(event => event.portfolioTicker === item.ticker || eventMatchesItem(event, item))
-    .map(event => scoreEvent(item, event))
+    .map(event => scoreEvent(item, event, sources))
     .filter(result => result.score >= Number(process.env.MIN_T_SCORE || 5))
     .sort((a, b) => b.score - a.score);
 
@@ -131,18 +166,20 @@ function eventMatchesItem(event, item) {
     .some(value => text.includes(normalize(value)));
 }
 
-function scoreEvent(item, event) {
+function scoreEvent(item, event, sources) {
   const text = normalize(`${event.title} ${event.summary} ${event.query || ''}`);
   const positiveMatches = matchList(item.positive_triggers || [], text);
   const negativeMatches = matchList(item.negative_triggers || [], text);
   const themeMatches = (item.themes || []).filter(theme => text.includes(normalize(theme)));
   const directMatch = [item.ticker, item.name].filter(Boolean).some(value => text.includes(normalize(value)));
   const queryMatch = event.query ? 1 : 0;
+  const source = event.querySource || findKnownSource(event, item, sources);
 
   let score = 1 + queryMatch;
   if (directMatch) score += 3;
   score += Math.min(themeMatches.length, 2) * 2;
   score += Math.min(positiveMatches.length + negativeMatches.length, 2) * 3;
+  score += source?.tier === 1 ? 2 : source?.tier === 2 ? 1 : 0;
 
   const direction = classifyDirection(positiveMatches.length, negativeMatches.length);
 
@@ -154,8 +191,22 @@ function scoreEvent(item, event) {
       positive: positiveMatches,
       negative: negativeMatches,
       themes: themeMatches,
+      source,
     },
   };
+}
+
+function findKnownSource(event, item, sources) {
+  const knownSources = sourcesForItem(item, sources);
+  const eventSource = normalize(event.source);
+  const eventDomain = normalize(event.sourceDomain);
+
+  return knownSources.find(source => {
+    const sourceName = normalize(source.name);
+    const sourceDomain = normalize(source.domain);
+    return sourceDomain && eventDomain.includes(sourceDomain)
+      || sourceName && eventSource.includes(sourceName);
+  });
 }
 
 function matchList(values, text) {
@@ -188,13 +239,17 @@ function formatAlert(alert) {
   const { item, event, score, direction, action } = alert;
   const icon = { positive: '🟢', negative: '🔴', mixed: '🟡', unknown: '⚪' }[direction] || '⚪';
   const directionLabel = { positive: '긍정', negative: '부정', mixed: '혼합', unknown: '불명' }[direction] || '불명';
+  const title = `[${item.ticker}]${item.name || item.ticker}`;
+  const newsTitle = cleanNewsText(event.title, event.source);
+  const newsSummary = cleanNewsText(event.summary, event.source);
+  const summary = isSameNewsText(newsTitle, newsSummary) ? '' : newsSummary;
 
   return [
-    `${icon} T${score} · ${item.ticker} · ${directionLabel} · ${action}`,
+    `${icon} T${score} · ${escapeHtml(title)} · ${directionLabel} · ${action}`,
     '',
-    `무슨 일:\n${event.title}${event.summary ? `\n${event.summary}` : ''}`,
+    `무슨 일:\n${escapeHtml(newsTitle)}${summary ? `\n${escapeHtml(summary)}` : ''}`,
     '',
-    `왜 중요:\n${item.why_it_matters || `${item.name || item.ticker}의 주요 감시 요인과 연결됩니다.`}`,
+    `왜 중요:\n${escapeHtml(item.why_it_matters || `${item.name || item.ticker}의 주요 감시 요인과 연결됩니다.`)}`,
     '',
     `큰그림:\n${formatChain(item.chain || [])}`,
     '',
@@ -202,23 +257,47 @@ function formatAlert(alert) {
     '',
     `확인할 데이터:\n${formatIndicators(item.key_indicators || [])}`,
     '',
-    `내 판단:\n${judgementSentence(item, direction, action)}`,
+    `내 판단:\n${escapeHtml(judgementSentence(item, direction, action))}`,
     '',
-    `출처:\n${event.source || 'Unknown'}${event.url ? ` · ${event.url}` : ''}`,
+    `출처:\n${formatEventSource(event, alert.matches?.source)}${event.url ? ` · ${escapeHtml(event.url)}` : ''}`,
   ].join('\n');
+}
+
+function formatEventSource(event, source) {
+  const label = escapeHtml(event.source || source?.name || 'Unknown');
+  if (!source?.why) return label;
+  return `${label} · ${escapeHtml(source.why)}`;
+}
+
+function cleanNewsText(text, source) {
+  let value = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!value || !source) return value;
+
+  const escapedSource = escapeRegExp(source);
+  value = value.replace(new RegExp(`\\s+-\\s+${escapedSource}$`, 'i'), '');
+  value = value.replace(new RegExp(`\\s+${escapedSource}$`, 'i'), '');
+  return value.trim();
+}
+
+function isSameNewsText(a, b) {
+  return normalize(a).replace(/[^a-z0-9가-힣]+/g, '') === normalize(b).replace(/[^a-z0-9가-힣]+/g, '');
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function formatChain(chain) {
   if (chain.length === 0) return '- 아직 등록된 체인 설명이 없습니다.';
   return chain.slice(0, 5)
-    .map(step => `- ${step.from} → ${step.to}: ${step.why}`)
+    .map(step => `- ${escapeHtml(step.from)} → ${escapeHtml(step.to)}: ${escapeHtml(step.why)}`)
     .join('\n');
 }
 
 function formatRelated(related) {
   if (related.length === 0) return '- 아직 등록된 관련 종목이 없습니다.';
   return related.slice(0, 6)
-    .map(entry => `- ${entry.ticker}${entry.name ? ` (${entry.name})` : ''}: ${entry.why}`)
+    .map(entry => `- <a href="${tradingViewUrl(entry)}">${escapeHtml(entry.ticker)}</a>${entry.name ? ` (${escapeHtml(entry.name)})` : ''}: ${escapeHtml(entry.why)}`)
     .join('\n');
 }
 
@@ -226,10 +305,10 @@ function formatIndicators(indicators) {
   if (indicators.length === 0) return '- 아직 등록된 확인 데이터가 없습니다.';
   return indicators.slice(0, 3)
     .map(entry => [
-      `- ${entry.name}`,
-      `  왜 봄: ${entry.why}`,
-      `  긍정: ${entry.positive}`,
-      `  부정: ${entry.negative}`,
+      `- ${escapeHtml(entry.name)}`,
+      `  왜 봄: ${escapeHtml(entry.why)}`,
+      `  긍정: ${escapeHtml(entry.positive)}`,
+      `  부정: ${escapeHtml(entry.negative)}`,
     ].join('\n'))
     .join('\n');
 }
@@ -259,6 +338,7 @@ async function sendTelegram(text) {
       body: JSON.stringify({
         chat_id: process.env.TELEGRAM_CHAT_ID,
         text: chunk,
+        parse_mode: 'HTML',
         link_preview_options: { is_disabled: true },
       }),
     });
@@ -267,6 +347,28 @@ async function sendTelegram(text) {
       throw new Error(`Telegram API error ${response.status}: ${await response.text()}`);
     }
   }
+}
+
+function tradingViewUrl(entry) {
+  const symbol = entry.tradingview_symbol || inferTradingViewSymbol(entry.ticker);
+  return `https://www.tradingview.com/symbols/${encodeURIComponent(symbol)}/`;
+}
+
+function inferTradingViewSymbol(ticker) {
+  const value = String(ticker || '').toUpperCase();
+  if (value.endsWith('.AX')) return `ASX-${value.slice(0, -3)}`;
+  if (value.endsWith('.HK')) return `HKEX-${value.slice(0, -3)}`;
+  if (value.endsWith('.KS')) return `KRX-${value.slice(0, -3)}`;
+  if (value.endsWith('.T')) return `TSE-${value.slice(0, -2)}`;
+  return value.replace('.', '-');
+}
+
+function escapeHtml(text) {
+  return String(text || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function splitMessage(text) {
@@ -284,6 +386,11 @@ function splitMessage(text) {
 
 function extractXml(block, tag) {
   const match = block.match(new RegExp(`<${tag}(?: [^>]*)?>([\\s\\S]*?)<\\/${tag}>`));
+  return match ? match[1] : '';
+}
+
+function extractXmlAttr(block, tag, attr) {
+  const match = block.match(new RegExp(`<${tag}[^>]*\\s${attr}="([^"]*)"[^>]*>`));
   return match ? match[1] : '';
 }
 
@@ -305,6 +412,14 @@ function stripHtml(text) {
 
 function normalize(value) {
   return String(value || '').toLowerCase();
+}
+
+function domainFromUrl(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
 }
 
 function uniqueBy(items, keyFn) {

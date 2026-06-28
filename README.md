@@ -72,3 +72,18 @@ CRCL은 일시중지.
   ]
 }
 ```
+
+## Sources
+
+현재 기사 본문을 직접 긁지 않습니다. 기본 수집은 Google News RSS이고, `data/sources.json`의 저명한 도메인을 `site:` 검색으로 섞습니다.
+
+소스 우선순위:
+
+```text
+1. 공식 원문: SEC, Federal Register, Commerce/BIS, Defense.gov, 회사 IR
+2. 저명 시장 뉴스: Reuters, Bloomberg, FT, WSJ
+3. 산업 전문: Mining.com, Fastmarkets, S&P Global, Argus, Defense News
+4. 하류 체인 전문: Automotive News, InsideEVs, Electrek, IEA
+```
+
+종목별로 `source_groups`를 지정하면 필요한 소스만 사용합니다.

@@ -1,0 +1,162 @@
+{
+  "default_groups": [
+    "market_news"
+  ],
+  "groups": {
+    "official_filings": [
+      {
+        "name": "SEC",
+        "domain": "sec.gov",
+        "tier": 1,
+        "why": "공식 공시/규제 원문"
+      },
+      {
+        "name": "Federal Register",
+        "domain": "federalregister.gov",
+        "tier": 1,
+        "why": "미국 규정/정책 원문"
+      },
+      {
+        "name": "U.S. Department of Commerce",
+        "domain": "commerce.gov",
+        "tier": 1,
+        "why": "무역/산업정책 공식 출처"
+      },
+      {
+        "name": "Bureau of Industry and Security",
+        "domain": "bis.doc.gov",
+        "tier": 1,
+        "why": "수출통제 공식 출처"
+      },
+      {
+        "name": "U.S. Department of Defense",
+        "domain": "defense.gov",
+        "tier": 1,
+        "why": "국방 정책/계약 공식 출처"
+      }
+    ],
+    "market_news": [
+      {
+        "name": "Reuters",
+        "domain": "reuters.com",
+        "tier": 1,
+        "why": "글로벌 시장 뉴스 1차급"
+      },
+      {
+        "name": "Bloomberg",
+        "domain": "bloomberg.com",
+        "tier": 1,
+        "why": "시장/정책/기업 뉴스 상위권"
+      },
+      {
+        "name": "Financial Times",
+        "domain": "ft.com",
+        "tier": 1,
+        "why": "글로벌 금융/정책 해설"
+      },
+      {
+        "name": "Wall Street Journal",
+        "domain": "wsj.com",
+        "tier": 1,
+        "why": "기업/시장 뉴스 상위권"
+      },
+      {
+        "name": "CNBC",
+        "domain": "cnbc.com",
+        "tier": 2,
+        "why": "시장 반응과 투자자 심리 확인"
+      },
+      {
+        "name": "Yahoo Finance",
+        "domain": "finance.yahoo.com",
+        "tier": 2,
+        "why": "시장 뉴스 집계와 주가 반응 확인"
+      },
+      {
+        "name": "Barron's",
+        "domain": "barrons.com",
+        "tier": 2,
+        "why": "투자자 관점 해설"
+      }
+    ],
+    "critical_minerals": [
+      {
+        "name": "Mining.com",
+        "domain": "mining.com",
+        "tier": 2,
+        "why": "광물/채굴 산업 전문 매체"
+      },
+      {
+        "name": "Fastmarkets",
+        "domain": "fastmarkets.com",
+        "tier": 2,
+        "why": "원자재 가격/공급망 전문"
+      },
+      {
+        "name": "S&P Global Commodity Insights",
+        "domain": "spglobal.com",
+        "tier": 2,
+        "why": "원자재/에너지 데이터와 해설"
+      },
+      {
+        "name": "Argus Media",
+        "domain": "argusmedia.com",
+        "tier": 2,
+        "why": "원자재 가격/정책 전문"
+      },
+      {
+        "name": "USGS",
+        "domain": "usgs.gov",
+        "tier": 1,
+        "why": "광물 수급 공식 데이터"
+      }
+    ],
+    "defense_supply_chain": [
+      {
+        "name": "Defense News",
+        "domain": "defensenews.com",
+        "tier": 2,
+        "why": "국방산업 전문 매체"
+      },
+      {
+        "name": "Breaking Defense",
+        "domain": "breakingdefense.com",
+        "tier": 2,
+        "why": "미국 방산/국방조달 전문"
+      },
+      {
+        "name": "Janes",
+        "domain": "janes.com",
+        "tier": 2,
+        "why": "방산/안보 데이터 전문"
+      }
+    ],
+    "ev_supply_chain": [
+      {
+        "name": "Automotive News",
+        "domain": "autonews.com",
+        "tier": 2,
+        "why": "자동차 산업 전문 매체"
+      },
+      {
+        "name": "InsideEVs",
+        "domain": "insideevs.com",
+        "tier": 2,
+        "why": "EV 수요/제품 흐름 확인"
+      },
+      {
+        "name": "Electrek",
+        "domain": "electrek.co",
+        "tier": 2,
+        "why": "EV/배터리 시장 반응 확인"
+      },
+      {
+        "name": "IEA",
+        "domain": "iea.org",
+        "tier": 1,
+        "why": "에너지/EV 수요 공식급 데이터"
+      }
+    ]
+  }
+}
+

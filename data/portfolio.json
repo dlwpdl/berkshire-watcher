@@ -11,6 +11,21 @@
         "defense supply chain",
         "EV motors"
       ],
+      "source_groups": [
+        "official_filings",
+        "market_news",
+        "critical_minerals",
+        "defense_supply_chain",
+        "ev_supply_chain"
+      ],
+      "trusted_sources": [
+        {
+          "name": "MP Materials Investor Relations",
+          "domain": "investors.mpmaterials.com",
+          "tier": 1,
+          "why": "회사 공식 발표/IR"
+        }
+      ],
       "why_it_matters": "MP는 중국 밖 희토류 공급망에 베팅하는 종목입니다. 회사 자체 뉴스가 아니어도 중국 수출통제, 미국 핵심광물 정책, 영구자석 수요 변화가 곧바로 투자 판단에 연결됩니다.",
       "watch_queries": [
         {
@@ -64,26 +79,31 @@
         {
           "ticker": "LYC.AX",
           "name": "Lynas Rare Earths",
+          "tradingview_symbol": "ASX-LYC",
           "why": "MP와 가장 직접 비교되는 중국 밖 희토류 공급자입니다."
         },
         {
           "ticker": "REMX",
           "name": "VanEck Rare Earth/Strategic Metals ETF",
+          "tradingview_symbol": "AMEX-REMX",
           "why": "희토류/전략광물 섹터 전체 심리를 보기 좋습니다."
         },
         {
           "ticker": "TSLA",
           "name": "Tesla",
+          "tradingview_symbol": "NASDAQ-TSLA",
           "why": "EV 모터와 공급망 비용 부담을 받는 하류 업체입니다."
         },
         {
           "ticker": "LMT",
           "name": "Lockheed Martin",
+          "tradingview_symbol": "NYSE-LMT",
           "why": "방산 수요 쪽 연결고리입니다. 정밀무기 수요가 커지면 희토류 전략성이 커집니다."
         },
         {
           "ticker": "NOC",
           "name": "Northrop Grumman",
+          "tradingview_symbol": "NYSE-NOC",
           "why": "방산 공급망 관점에서 같이 볼 수 있는 하류 수요 종목입니다."
         }
       ],
@@ -110,4 +130,3 @@
     }
   ]
 }
-
