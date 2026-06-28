@@ -26,7 +26,7 @@ async function main() {
     return;
   }
 
-  const message = alerts.map(formatAlert).join('\n\n---\n\n');
+  const message = (await Promise.all(alerts.map(formatAlert))).join('\n\n---\n\n');
   console.log(message);
 
   if (!args.dryRun && process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
@@ -225,7 +225,13 @@ function scoreEvent(item, event, sources) {
     event,
     score: Math.min(10, score),
     direction,
-    matches: { source },
+    matches: {
+      positive: positiveMatches,
+      negative: negativeMatches,
+      themes: themeMatches,
+      sectors: sectorMatches,
+      source,
+    },
   };
 }
 
@@ -268,40 +274,77 @@ function actionFor(item, score, direction) {
   return '지켜보기';
 }
 
-function formatAlert(alert) {
+async function formatAlert(alert) {
   const { item, event, score, direction, action } = alert;
   const icon = { positive: '🟢', negative: '🔴', mixed: '🟡', unknown: '⚪' }[direction] || '⚪';
   const directionLabel = { positive: '긍정', negative: '부정', mixed: '혼합', unknown: '불명' }[direction] || '불명';
   const title = `[${item.ticker}]${item.name || item.ticker}`;
   const newsTitle = cleanNewsText(event.title, event.source);
   const newsSummary = cleanNewsText(event.summary, event.source);
-  const summary = isSameNewsText(newsTitle, newsSummary) ? '' : newsSummary;
+  const translatedTitle = await translateNewsText(newsTitle);
+  const translatedSummary = await translateNewsText(newsSummary);
+  const summary = isSameNewsText(translatedTitle, translatedSummary) ? '' : translatedSummary;
 
   return [
     `${icon} T${score} · ${escapeHtml(title)} · ${directionLabel} · ${action}`,
     '',
-    `무슨 일:\n${escapeHtml(newsTitle)}${summary ? `\n${escapeHtml(summary)}` : ''}`,
+    `<b>이슈</b>\n${escapeHtml(translatedTitle)}${summary ? `\n${escapeHtml(summary)}` : ''}`,
     '',
-    `왜 중요:\n${escapeHtml(item.why_it_matters || `${item.name || item.ticker}의 주요 감시 요인과 연결됩니다.`)}`,
+    `<b>분석요인</b>\n${formatAnalysisFactors(alert.matches || {})}`,
     '',
-    `섹터 순환:\n${formatSectorCycle(item)}`,
+    `<b>의미</b>\n${escapeHtml(item.why_it_matters || `${item.name || item.ticker}의 주요 감시 요인과 연결됩니다.`)}`,
     '',
-    `큰그림:\n${formatChain(item.chain || [])}`,
+    `<b>흐름</b>\n${formatSectorCycle(item)}`,
     '',
-    `같이 봐야 할 종목:\n${formatRelated(item.related_tickers || [])}`,
+    `<b>연결</b>\n${formatChain(item.chain || [])}`,
     '',
-    `확인할 데이터:\n${formatIndicators(item.key_indicators || [])}`,
+    `<b>관련주</b>\n${formatRelated(item.related_tickers || [])}`,
     '',
-    `내 판단:\n${escapeHtml(judgementSentence(item, direction, action))}`,
+    `<b>체크</b>\n${formatIndicators(item.key_indicators || [])}`,
     '',
-    `출처:\n${formatEventSource(event, alert.matches?.source)}${event.url ? ` · ${escapeHtml(event.url)}` : ''}`,
+    `<b>판단</b>\n${escapeHtml(judgementSentence(item, direction, action))}`,
+    '',
+    `<b>출처</b>\n${formatEventSource(event, alert.matches?.source)}`,
   ].join('\n');
+}
+
+async function translateNewsText(text) {
+  const value = String(text || '').trim();
+  if (!value || /[가-힣]/.test(value) || process.env.TRANSLATE_NEWS === '0') return value;
+
+  try {
+    const url = new URL('https://translate.googleapis.com/translate_a/single');
+    url.search = new URLSearchParams({
+      client: 'gtx',
+      sl: 'auto',
+      tl: 'ko',
+      dt: 't',
+      q: value,
+    });
+    const response = await fetch(url, { headers: { 'User-Agent': 'berkshire-watcher/0.1' } });
+    if (!response.ok) return value;
+    const body = await response.json();
+    return body?.[0]?.map(part => part?.[0] || '').join('') || value;
+  } catch {
+    return value;
+  }
 }
 
 function formatEventSource(event, source) {
   const label = escapeHtml(event.source || source?.name || 'Unknown');
-  if (!source?.why) return label;
-  return `${label} · ${escapeHtml(source.why)}`;
+  const linked = event.url ? `<a href="${escapeHtml(event.url)}">${label}</a>` : label;
+  if (!source?.why) return linked;
+  return `${linked} · ${escapeHtml(source.why)}`;
+}
+
+function formatAnalysisFactors(matches) {
+  const lines = [];
+  if (matches.positive?.length) lines.push(`- 긍정: ${escapeHtml(matches.positive.slice(0, 3).join(' / '))}`);
+  if (matches.negative?.length) lines.push(`- 부정: ${escapeHtml(matches.negative.slice(0, 3).join(' / '))}`);
+  if (matches.themes?.length) lines.push(`- 테마: ${escapeHtml(matches.themes.slice(0, 3).join(' / '))}`);
+  if (matches.sectors?.length) lines.push(`- 섹터: ${escapeHtml(matches.sectors.slice(0, 2).join(' / '))}`);
+  if (matches.source?.name) lines.push(`- 출처신뢰: ${escapeHtml(matches.source.name)} tier ${escapeHtml(matches.source.tier || '?')}`);
+  return lines.length ? lines.join('\n') : '- 직접 트리거보다는 등록된 감시 쿼리/출처 신뢰도로 잡힌 이슈입니다.';
 }
 
 function cleanNewsText(text, source) {
@@ -344,7 +387,7 @@ function formatChain(chain) {
 
 function formatRelated(related) {
   if (related.length === 0) return '- 아직 등록된 관련 종목이 없습니다.';
-  return related.slice(0, 6)
+  return related.slice(0, 7)
     .map(entry => `- <a href="${tradingViewUrl(entry)}">${escapeHtml(entry.ticker)}</a>${entry.name ? ` (${escapeHtml(entry.name)})` : ''}: ${escapeHtml(entry.why)}`)
     .join('\n');
 }
