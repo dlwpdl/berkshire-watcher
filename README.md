@@ -1,0 +1,74 @@
+# Berkshire Watcher
+
+`portfolio.json`에 등록한 종목을 기준으로 회사 뉴스가 아니라 요인망 변화를 감시해 Telegram으로 보냅니다.
+
+알림 목표:
+
+```text
+T점수 + 긍정/부정 + 쉬운 판단 + 큰그림 + 같이 봐야 할 종목 + 확인할 데이터 해석법
+```
+
+## Run
+
+```bash
+npm run check
+```
+
+실제 뉴스 검색과 Telegram 전송:
+
+```bash
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_CHAT_ID=...
+npm run send
+```
+
+`--dry-run`을 붙이면 Telegram 전송 없이 콘솔에만 출력합니다.
+
+## Telecodex Flow
+
+1. Telegram에서 ai-berkshire/berkshire-watcher 전용 Codex 세션에 자연어로 요청합니다.
+2. Codex가 `data/portfolio.json`을 수정합니다.
+3. Codex가 commit/push합니다.
+4. GitHub Actions가 매일 `portfolio.json`을 읽고 알림을 보냅니다.
+
+예:
+
+```text
+MP 관심종목 추가. 희토류, 방산, EV 체인으로 봐줘.
+NVDA는 보유로 바꿔.
+CRCL은 일시중지.
+```
+
+삭제는 기본적으로 `paused`로 바꾸는 것을 권장합니다. 완전 삭제는 명시했을 때만 하세요.
+
+## Portfolio Shape
+
+중요한 필드만 유지합니다.
+
+```json
+{
+  "ticker": "MP",
+  "status": "watching",
+  "themes": ["rare earths", "defense supply chain"],
+  "watch_queries": [
+    {
+      "query": "China rare earth export controls",
+      "why": "중국 공급망 압박이 커지는지 확인"
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "LYC.AX",
+      "why": "MP와 가장 직접 비교되는 중국 밖 희토류 공급자"
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "NdPr price",
+      "why": "희토류 핵심 가격 지표",
+      "positive": "상승하면 MP 매출/마진 기대에 긍정",
+      "negative": "급락하면 공급망 프리미엄 약화 가능"
+    }
+  ]
+}
+```

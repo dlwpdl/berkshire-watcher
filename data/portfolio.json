@@ -1,0 +1,113 @@
+{
+  "items": [
+    {
+      "ticker": "MP",
+      "name": "MP Materials",
+      "status": "watching",
+      "themes": [
+        "rare earths",
+        "critical minerals",
+        "permanent magnets",
+        "defense supply chain",
+        "EV motors"
+      ],
+      "why_it_matters": "MP는 중국 밖 희토류 공급망에 베팅하는 종목입니다. 회사 자체 뉴스가 아니어도 중국 수출통제, 미국 핵심광물 정책, 영구자석 수요 변화가 곧바로 투자 판단에 연결됩니다.",
+      "watch_queries": [
+        {
+          "query": "China rare earth export controls",
+          "why": "중국 공급망 압박이 커지는지 확인"
+        },
+        {
+          "query": "US Department of Defense rare earth critical minerals",
+          "why": "희토류가 국가안보 공급망으로 더 강하게 인정받는지 확인"
+        },
+        {
+          "query": "MP Materials magnet ramp",
+          "why": "MP가 단순 광산에서 정제/자석 밸류체인으로 올라가는지 확인"
+        },
+        {
+          "query": "NdPr oxide price rare earth",
+          "why": "희토류 핵심 가격 흐름 확인"
+        }
+      ],
+      "positive_triggers": [
+        "export controls",
+        "defense funding",
+        "critical minerals funding",
+        "magnet ramp",
+        "long-term supply agreement"
+      ],
+      "negative_triggers": [
+        "ramp delay",
+        "rare earth prices fall",
+        "export controls eased",
+        "contract cancellation"
+      ],
+      "chain": [
+        {
+          "from": "중국 수출통제",
+          "to": "희토류/자석 소재 공급 불안",
+          "why": "중국이 공급을 조이면 하류 업체는 중국 밖 공급처를 찾게 됩니다."
+        },
+        {
+          "from": "희토류/자석 소재 공급 불안",
+          "to": "EV/풍력/방산/로봇 원가와 조달 리스크",
+          "why": "영구자석은 전기모터와 정밀무기에 들어가서 하류 산업의 병목이 될 수 있습니다."
+        },
+        {
+          "from": "미국 핵심광물 지원",
+          "to": "중국 밖 공급망 프리미엄",
+          "why": "보조금이나 장기계약이 붙으면 MP 같은 비중국 공급자의 하방 안정성이 좋아질 수 있습니다."
+        }
+      ],
+      "related_tickers": [
+        {
+          "ticker": "LYC.AX",
+          "name": "Lynas Rare Earths",
+          "why": "MP와 가장 직접 비교되는 중국 밖 희토류 공급자입니다."
+        },
+        {
+          "ticker": "REMX",
+          "name": "VanEck Rare Earth/Strategic Metals ETF",
+          "why": "희토류/전략광물 섹터 전체 심리를 보기 좋습니다."
+        },
+        {
+          "ticker": "TSLA",
+          "name": "Tesla",
+          "why": "EV 모터와 공급망 비용 부담을 받는 하류 업체입니다."
+        },
+        {
+          "ticker": "LMT",
+          "name": "Lockheed Martin",
+          "why": "방산 수요 쪽 연결고리입니다. 정밀무기 수요가 커지면 희토류 전략성이 커집니다."
+        },
+        {
+          "ticker": "NOC",
+          "name": "Northrop Grumman",
+          "why": "방산 공급망 관점에서 같이 볼 수 있는 하류 수요 종목입니다."
+        }
+      ],
+      "key_indicators": [
+        {
+          "name": "NdPr 가격",
+          "why": "희토류 핵심 가격 지표입니다.",
+          "positive": "오르면 MP 매출/마진 기대에는 긍정입니다.",
+          "negative": "너무 급등하면 하류 업체 수요 둔화 리스크도 같이 생깁니다."
+        },
+        {
+          "name": "중국 희토류 수출량",
+          "why": "공급망 압박을 보는 지표입니다.",
+          "positive": "줄어들면 중국 밖 공급망 가치가 올라갈 수 있습니다.",
+          "negative": "다시 늘어나면 MP 프리미엄이 약해질 수 있습니다."
+        },
+        {
+          "name": "MP 정제/자석 ramp 일정",
+          "why": "MP가 단순 광산 회사에서 고부가 공급망 회사로 올라가는지 보는 핵심입니다.",
+          "positive": "일정대로 진행되고 고객 계약이 붙으면 긍정입니다.",
+          "negative": "지연되면 투자 논리의 질이 낮아집니다."
+        }
+      ]
+    }
+  ]
+}
+
