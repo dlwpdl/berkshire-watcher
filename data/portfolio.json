@@ -4,6 +4,15 @@
       "ticker": "MP",
       "name": "MP Materials",
       "status": "watching",
+      "portfolios": [
+        "전체",
+        "전략광물",
+        "고위험성장"
+      ],
+      "sector": "Materials",
+      "subsector": "Rare Earths & Critical Minerals",
+      "strategy": "growth",
+      "risk_bucket": "high",
       "themes": [
         "rare earths",
         "critical minerals",
@@ -11,6 +20,24 @@
         "defense supply chain",
         "EV motors"
       ],
+      "sector_cycle": {
+        "why": "MP는 개별 회사 뉴스보다 소재/전략광물 섹터 자금 흐름, 중국 리스크, 방산/EV 수요 순환에 크게 흔들릴 수 있습니다.",
+        "positive": [
+          "원자재/소재 섹터가 시장 대비 강함",
+          "전략광물/희토류 ETF가 동반 상승",
+          "방산/EV 공급망 뉴스가 같은 방향으로 움직임"
+        ],
+        "negative": [
+          "소재 섹터가 시장 대비 약함",
+          "희토류 가격과 관련 ETF가 같이 하락",
+          "성장주/고변동성 종목에서 자금이 빠짐"
+        ],
+        "watch": [
+          "Materials sector relative strength",
+          "REMX trend",
+          "defense and EV supply chain headlines"
+        ]
+      },
       "source_groups": [
         "official_filings",
         "market_news",

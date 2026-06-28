@@ -171,6 +171,9 @@ function scoreEvent(item, event, sources) {
   const positiveMatches = matchList(item.positive_triggers || [], text);
   const negativeMatches = matchList(item.negative_triggers || [], text);
   const themeMatches = (item.themes || []).filter(theme => text.includes(normalize(theme)));
+  const sectorMatches = [item.sector, item.subsector, ...(item.sector_cycle?.watch || [])]
+    .filter(Boolean)
+    .filter(value => text.includes(normalize(value)));
   const directMatch = [item.ticker, item.name].filter(Boolean).some(value => text.includes(normalize(value)));
   const queryMatch = event.query ? 1 : 0;
   const source = event.querySource || findKnownSource(event, item, sources);
@@ -178,6 +181,7 @@ function scoreEvent(item, event, sources) {
   let score = 1 + queryMatch;
   if (directMatch) score += 3;
   score += Math.min(themeMatches.length, 2) * 2;
+  score += Math.min(sectorMatches.length, 1) * 2;
   score += Math.min(positiveMatches.length + negativeMatches.length, 2) * 3;
   score += source?.tier === 1 ? 2 : source?.tier === 2 ? 1 : 0;
 
@@ -191,6 +195,7 @@ function scoreEvent(item, event, sources) {
       positive: positiveMatches,
       negative: negativeMatches,
       themes: themeMatches,
+      sectors: sectorMatches,
       source,
     },
   };
@@ -251,6 +256,8 @@ function formatAlert(alert) {
     '',
     `왜 중요:\n${escapeHtml(item.why_it_matters || `${item.name || item.ticker}의 주요 감시 요인과 연결됩니다.`)}`,
     '',
+    `섹터 순환:\n${formatSectorCycle(item)}`,
+    '',
     `큰그림:\n${formatChain(item.chain || [])}`,
     '',
     `같이 봐야 할 종목:\n${formatRelated(item.related_tickers || [])}`,
@@ -285,6 +292,19 @@ function isSameNewsText(a, b) {
 
 function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function formatSectorCycle(item) {
+  if (!item.sector && !item.sector_cycle) return '- 아직 등록된 섹터 순환 설명이 없습니다.';
+
+  const lines = [
+    `- 섹터: ${escapeHtml([item.sector, item.subsector].filter(Boolean).join(' / '))}`,
+  ];
+  if (item.portfolios?.length) lines.push(`- 포트폴리오: ${escapeHtml(item.portfolios.join(' / '))}`);
+  if (item.sector_cycle?.why) lines.push(`- 왜 봄: ${escapeHtml(item.sector_cycle.why)}`);
+  if (item.sector_cycle?.positive?.length) lines.push(`- 긍정: ${escapeHtml(item.sector_cycle.positive.slice(0, 2).join(' / '))}`);
+  if (item.sector_cycle?.negative?.length) lines.push(`- 부정: ${escapeHtml(item.sector_cycle.negative.slice(0, 2).join(' / '))}`);
+  return lines.join('\n');
 }
 
 function formatChain(chain) {

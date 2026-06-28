@@ -49,7 +49,16 @@ CRCL은 일시중지.
 {
   "ticker": "MP",
   "status": "watching",
+  "portfolios": ["전체", "전략광물"],
+  "sector": "Materials",
+  "subsector": "Rare Earths & Critical Minerals",
   "themes": ["rare earths", "defense supply chain"],
+  "sector_cycle": {
+    "why": "소재/전략광물 섹터 자금 흐름이 개별 종목 판단에 영향을 줌",
+    "positive": ["소재 섹터가 시장 대비 강함"],
+    "negative": ["성장주/고변동성 종목에서 자금이 빠짐"],
+    "watch": ["Materials sector relative strength", "REMX trend"]
+  },
   "watch_queries": [
     {
       "query": "China rare earth export controls",
