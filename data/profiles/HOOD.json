@@ -1,0 +1,149 @@
+{
+  "template": "crypto_fintech",
+  "sector": "Financial Services",
+  "subsector": "Capital Markets / Retail Brokerage / Crypto",
+  "themes": [
+    "retail brokerage",
+    "crypto trading",
+    "options trading",
+    "net interest income",
+    "prediction markets",
+    "payment for order flow"
+  ],
+  "sector_cycle": {
+    "why": "HOOD는 회사 실행력도 중요하지만 개인투자자 위험선호, 크립토 거래량, 금리, 규제 사이클에 크게 반응합니다.",
+    "positive": [
+      "크립토/주식 거래대금 증가",
+      "순입금과 예탁자산 증가",
+      "규제 리스크 완화"
+    ],
+    "negative": [
+      "개인투자자 거래량 감소",
+      "PFOF/옵션/크립토 규제 강화",
+      "금리 하락으로 이자수익 둔화"
+    ],
+    "watch": [
+      "crypto trading volume",
+      "retail trading activity",
+      "net deposits",
+      "payment for order flow regulation"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "crypto_fintech"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Robinhood Investor Relations",
+      "domain": "investors.robinhood.com",
+      "tier": 1,
+      "why": "회사 공식 발표/IR"
+    }
+  ],
+  "why_it_matters": "HOOD는 단순 증권사가 아니라 개인투자자 위험선호와 크립토 사이클에 레버리지된 플랫폼입니다. 거래량, 예탁자산, 규제가 좋아지면 강하고, 거래 열기가 식거나 규제가 강해지면 빠르게 약해질 수 있습니다.",
+  "watch_queries": [
+    {
+      "query": "Robinhood crypto trading volume",
+      "why": "크립토 사이클이 HOOD 거래수익으로 이어지는지 확인"
+    },
+    {
+      "query": "Robinhood net deposits assets under custody",
+      "why": "일회성 거래가 아니라 자산 플랫폼으로 커지는지 확인"
+    },
+    {
+      "query": "Robinhood payment for order flow SEC regulation",
+      "why": "핵심 수익원 규제 리스크를 확인"
+    },
+    {
+      "query": "Robinhood prediction markets regulation",
+      "why": "신규 성장축이 규제에 막히는지 확인"
+    }
+  ],
+  "positive_triggers": [
+    "crypto volume",
+    "net deposits",
+    "assets under custody",
+    "Gold subscribers",
+    "international expansion",
+    "trading volume"
+  ],
+  "negative_triggers": [
+    "SEC enforcement",
+    "payment for order flow ban",
+    "crypto crackdown",
+    "trading volume decline",
+    "outage",
+    "regulatory probe"
+  ],
+  "chain": [
+    {
+      "from": "크립토/밈주식 위험선호",
+      "to": "거래량과 거래수익",
+      "why": "개인투자자가 다시 활발해지면 HOOD의 거래 기반 매출이 빠르게 좋아질 수 있습니다."
+    },
+    {
+      "from": "금리 변화",
+      "to": "순이자수익",
+      "why": "고객 현금과 증권대여에서 나오는 이자성 수익은 금리 수준에 민감합니다."
+    },
+    {
+      "from": "PFOF/크립토 규제",
+      "to": "수익 모델 안정성",
+      "why": "규제가 강해지면 거래수익과 신규 상품 확장이 동시에 압박받을 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "COIN",
+      "name": "Coinbase",
+      "tradingview_symbol": "NASDAQ-COIN",
+      "why": "크립토 거래량과 규제 민감도를 같이 보여주는 대표 비교 종목입니다."
+    },
+    {
+      "ticker": "IBKR",
+      "name": "Interactive Brokers",
+      "tradingview_symbol": "NASDAQ-IBKR",
+      "why": "브로커리지 사업의 질과 거래 환경을 비교하기 좋습니다."
+    },
+    {
+      "ticker": "SCHW",
+      "name": "Charles Schwab",
+      "tradingview_symbol": "NYSE-SCHW",
+      "why": "전통 브로커리지/자산 플랫폼과 금리 민감도를 같이 봅니다."
+    },
+    {
+      "ticker": "MSTR",
+      "name": "MicroStrategy",
+      "tradingview_symbol": "NASDAQ-MSTR",
+      "why": "크립토 위험선호가 강해질 때 같이 움직이는 종목입니다."
+    },
+    {
+      "ticker": "CME",
+      "name": "CME Group",
+      "tradingview_symbol": "NASDAQ-CME",
+      "why": "파생상품 거래량과 시장 변동성 축을 확인할 수 있습니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "크립토/옵션 거래량",
+      "why": "HOOD 거래수익의 민감도가 큰 핵심 데이터입니다.",
+      "positive": "거래량이 늘면 수익 레버리지가 커질 수 있습니다.",
+      "negative": "거래량이 줄면 성장주 프리미엄이 약해질 수 있습니다."
+    },
+    {
+      "name": "예탁자산과 순입금",
+      "why": "단기 거래앱이 아니라 장기 금융 플랫폼이 되는지 확인합니다.",
+      "positive": "순입금과 AUC가 꾸준히 늘면 질 좋은 성장입니다.",
+      "negative": "사용자는 많아도 자산이 안 쌓이면 수익 안정성이 낮습니다."
+    },
+    {
+      "name": "PFOF/크립토 규제",
+      "why": "수익 모델 자체를 바꿀 수 있는 리스크입니다.",
+      "positive": "규제 불확실성이 완화되면 멀티플 부담이 줄어듭니다.",
+      "negative": "금지/벌금/상품 제한이 나오면 다시 고려해야 합니다."
+    }
+  ]
+}

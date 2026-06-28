@@ -1,0 +1,169 @@
+{
+  "template": "glp1_pharma",
+  "sector": "Healthcare",
+  "subsector": "Drug Manufacturers / GLP-1 / Obesity & Diabetes",
+  "themes": [
+    "GLP-1",
+    "obesity",
+    "diabetes",
+    "tirzepatide",
+    "Zepbound",
+    "Mounjaro",
+    "pipeline",
+    "drug pricing"
+  ],
+  "sector_cycle": {
+    "why": "LLY는 GLP-1 수요, 생산능력, 보험/정부 가격정책, 임상 파이프라인 사이클에 민감합니다.",
+    "positive": [
+      "Zepbound/Mounjaro 수요와 생산능력 확대",
+      "보험 커버리지 확대",
+      "후속 파이프라인 임상 성공"
+    ],
+    "negative": [
+      "안전성 이슈",
+      "가격 인하/보험 제한",
+      "경쟁사 데이터 개선"
+    ],
+    "watch": [
+      "GLP-1 demand",
+      "obesity drug coverage",
+      "manufacturing capacity",
+      "FDA approval",
+      "Medicare pricing"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "healthcare_pharma"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Eli Lilly Investor Relations",
+      "domain": "investor.lilly.com",
+      "tier": 1,
+      "why": "회사 공식 발표/IR"
+    },
+    {
+      "name": "FDA",
+      "domain": "fda.gov",
+      "tier": 1,
+      "why": "의약품 승인/안전성 공식 출처"
+    },
+    {
+      "name": "ClinicalTrials.gov",
+      "domain": "clinicaltrials.gov",
+      "tier": 1,
+      "why": "임상시험 공식 등록 데이터"
+    }
+  ],
+  "why_it_matters": "LLY의 핵심은 GLP-1 비만/당뇨 치료제가 거대한 수요를 얼마나 오래, 얼마나 높은 마진으로 흡수하느냐입니다. 생산능력과 커버리지가 열리면 긍정이고, 가격정책/안전성/경쟁 데이터가 나빠지면 다시 봐야 합니다.",
+  "watch_queries": [
+    {
+      "query": "Eli Lilly Zepbound supply capacity",
+      "why": "수요를 실제 매출로 바꿀 생산능력을 확인"
+    },
+    {
+      "query": "Mounjaro Zepbound GLP-1 market share",
+      "why": "비만/당뇨 시장 점유율 흐름을 확인"
+    },
+    {
+      "query": "Eli Lilly FDA obesity diabetes pipeline",
+      "why": "승인과 후속 파이프라인 변화를 확인"
+    },
+    {
+      "query": "GLP-1 Medicare pricing Lilly",
+      "why": "가격정책과 보험 커버리지 리스크를 확인"
+    }
+  ],
+  "positive_triggers": [
+    "Zepbound sales",
+    "Mounjaro sales",
+    "capacity expansion",
+    "FDA approval",
+    "pipeline data",
+    "coverage expansion"
+  ],
+  "negative_triggers": [
+    "safety signal",
+    "pricing pressure",
+    "Medicare negotiation",
+    "supply shortage",
+    "competition",
+    "trial failure"
+  ],
+  "chain": [
+    {
+      "from": "비만/당뇨 유병률",
+      "to": "GLP-1 장기 수요",
+      "why": "치료 대상 인구가 크기 때문에 커버리지와 생산능력이 열리면 매출 규모가 커질 수 있습니다."
+    },
+    {
+      "from": "생산능력 증설",
+      "to": "Zepbound/Mounjaro 매출",
+      "why": "수요가 있어도 공급이 부족하면 매출이 제한됩니다. 증설은 실적 상향의 직접 요인입니다."
+    },
+    {
+      "from": "보험/정부 가격정책",
+      "to": "접근성과 마진",
+      "why": "커버리지가 넓어지면 수요는 커지지만, 가격 압박이 세면 마진 기대가 낮아질 수 있습니다."
+    },
+    {
+      "from": "경쟁사 임상 데이터",
+      "to": "시장점유율과 멀티플",
+      "why": "더 편하거나 효과 좋은 약이 나오면 LLY의 성장 프리미엄이 조정될 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "NVO",
+      "name": "Novo Nordisk",
+      "tradingview_symbol": "NYSE-NVO",
+      "why": "GLP-1 비만/당뇨 시장의 가장 직접적인 경쟁자입니다."
+    },
+    {
+      "ticker": "AMGN",
+      "name": "Amgen",
+      "tradingview_symbol": "NASDAQ-AMGN",
+      "why": "비만 치료제 후속 경쟁 파이프라인을 확인해야 합니다."
+    },
+    {
+      "ticker": "PFE",
+      "name": "Pfizer",
+      "tradingview_symbol": "NYSE-PFE",
+      "why": "대형 제약사의 비만/대사질환 경쟁과 M&A 흐름을 봅니다."
+    },
+    {
+      "ticker": "MRK",
+      "name": "Merck",
+      "tradingview_symbol": "NYSE-MRK",
+      "why": "대형 제약 섹터 자금 흐름과 파이프라인 평가를 비교합니다."
+    },
+    {
+      "ticker": "HIMS",
+      "name": "Hims & Hers",
+      "tradingview_symbol": "NYSE-HIMS",
+      "why": "비만치료제 접근성/가격 민감 소비자 수요를 간접적으로 보여줍니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "Zepbound/Mounjaro 매출",
+      "why": "LLY 성장 프리미엄의 핵심 실적 지표입니다.",
+      "positive": "매출이 예상보다 빠르게 늘면 보유 고려 신호가 강해집니다.",
+      "negative": "성장이 둔화되면 공급, 가격, 경쟁 중 원인을 확인해야 합니다."
+    },
+    {
+      "name": "생산능력과 공급 상태",
+      "why": "수요가 매출로 전환되는 병목입니다.",
+      "positive": "공급 부족이 풀리면 실적 상향 여지가 생깁니다.",
+      "negative": "부족이 길어지면 점유율과 환자 유지에 부담입니다."
+    },
+    {
+      "name": "보험 커버리지/약가 정책",
+      "why": "시장 크기와 마진을 동시에 결정합니다.",
+      "positive": "커버리지가 넓어지면 접근성이 좋아지고 수요가 커집니다.",
+      "negative": "약가 인하나 제한적 커버리지는 매출/마진 기대를 낮춥니다."
+    }
+  ]
+}

@@ -2,17 +2,20 @@ import fs from 'node:fs/promises';
 
 const DEFAULT_PORTFOLIO = 'data/portfolio.json';
 const DEFAULT_SOURCES = 'data/sources.json';
+const DEFAULT_PROFILES_DIR = 'data/profiles';
+const DEFAULT_TEMPLATES_DIR = 'data/templates';
 const MAX_MESSAGE_LENGTH = 3900;
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const portfolio = await readJson(args.portfolio || DEFAULT_PORTFOLIO);
+  const items = await loadPortfolioItems(portfolio.items || []);
   const sources = await readOptionalJson(args.sources || DEFAULT_SOURCES, { groups: {} });
   const events = args.events
     ? await readJson(args.events)
-    : await collectEvents(portfolio.items || [], sources);
+    : await collectEvents(items, sources);
 
-  const alerts = (portfolio.items || [])
+  const alerts = items
     .filter(item => item.status !== 'paused')
     .map(item => analyzeItem(item, events, sources))
     .filter(Boolean)
@@ -55,6 +58,40 @@ async function readOptionalJson(path, fallback) {
   }
 }
 
+async function loadPortfolioItems(items) {
+  return Promise.all(items.map(async item => {
+    const profile = await readOptionalJson(`${DEFAULT_PROFILES_DIR}/${item.profile || item.ticker}.json`, {});
+    const templateName = item.template || profile.template;
+    const template = templateName
+      ? await readOptionalJson(`${DEFAULT_TEMPLATES_DIR}/${templateName}.json`, {})
+      : {};
+
+    return mergeItem(template, profile, item);
+  }));
+}
+
+function mergeItem(...parts) {
+  return parts.reduce((merged, part) => mergeValue(merged, part || {}), {});
+}
+
+function mergeValue(left, right) {
+  if (Array.isArray(left) && Array.isArray(right)) {
+    return uniqueBy([...right, ...left], value => JSON.stringify(value));
+  }
+  if (isPlainObject(left) && isPlainObject(right)) {
+    const merged = { ...left };
+    for (const [key, value] of Object.entries(right)) {
+      merged[key] = key in merged ? mergeValue(merged[key], value) : value;
+    }
+    return merged;
+  }
+  return right;
+}
+
+function isPlainObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
 async function collectEvents(items, sources) {
   const all = [];
 
@@ -66,7 +103,6 @@ async function collectEvents(items, sources) {
         ...event,
         portfolioTicker: item.ticker,
         query: query.query,
-        queryWhy: query.why,
         querySource: query.source || null,
       })));
       await sleep(300);
@@ -129,10 +165,8 @@ function parseRss(xml) {
       title: decodeXml(extractXml(block, 'title')),
       summary: stripHtml(decodeXml(extractXml(block, 'description'))),
       source: decodeXml(extractXml(block, 'source')) || 'Google News',
-      sourceUrl: decodeXml(extractXmlAttr(block, 'source', 'url')),
       sourceDomain: domainFromUrl(decodeXml(extractXmlAttr(block, 'source', 'url'))),
       url: decodeXml(extractXml(block, 'link')),
-      publishedAt: decodeXml(extractXml(block, 'pubDate')),
     });
   }
 
@@ -191,13 +225,7 @@ function scoreEvent(item, event, sources) {
     event,
     score: Math.min(10, score),
     direction,
-    matches: {
-      positive: positiveMatches,
-      negative: negativeMatches,
-      themes: themeMatches,
-      sectors: sectorMatches,
-      source,
-    },
+    matches: { source },
   };
 }
 

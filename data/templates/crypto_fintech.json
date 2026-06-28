@@ -1,0 +1,24 @@
+{
+  "sector": "Financial Services",
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "crypto_fintech"
+  ],
+  "themes": [
+    "retail brokerage",
+    "crypto trading",
+    "regulation",
+    "net interest income"
+  ],
+  "positive_triggers": [
+    "trading volume",
+    "net deposits",
+    "assets under custody"
+  ],
+  "negative_triggers": [
+    "SEC enforcement",
+    "crypto crackdown",
+    "payment for order flow ban"
+  ]
+}

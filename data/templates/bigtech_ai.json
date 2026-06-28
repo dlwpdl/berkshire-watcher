@@ -1,0 +1,24 @@
+{
+  "sector": "Communication Services",
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "ai_infrastructure"
+  ],
+  "themes": [
+    "AI search",
+    "cloud",
+    "advertising",
+    "antitrust"
+  ],
+  "positive_triggers": [
+    "AI adoption",
+    "cloud growth",
+    "advertising growth"
+  ],
+  "negative_triggers": [
+    "antitrust",
+    "capex pressure",
+    "ad slowdown"
+  ]
+}

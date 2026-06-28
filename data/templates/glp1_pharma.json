@@ -1,0 +1,25 @@
+{
+  "sector": "Healthcare",
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "healthcare_pharma"
+  ],
+  "themes": [
+    "GLP-1",
+    "obesity",
+    "diabetes",
+    "pipeline",
+    "drug pricing"
+  ],
+  "positive_triggers": [
+    "FDA approval",
+    "capacity expansion",
+    "coverage expansion"
+  ],
+  "negative_triggers": [
+    "safety signal",
+    "pricing pressure",
+    "trial failure"
+  ]
+}

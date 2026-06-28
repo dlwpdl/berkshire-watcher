@@ -1,0 +1,170 @@
+{
+  "template": "ai_semiconductors",
+  "sector": "Technology",
+  "subsector": "Semiconductors / AI Accelerators",
+  "themes": [
+    "AI GPU",
+    "data center",
+    "Blackwell",
+    "CUDA",
+    "HBM",
+    "CoWoS",
+    "inference",
+    "export controls"
+  ],
+  "sector_cycle": {
+    "why": "NVDA는 AI capex 사이클, 데이터센터 투자, HBM/패키징 병목, 수출통제에 동시에 민감합니다.",
+    "positive": [
+      "하이퍼스케일러 capex 상향",
+      "Blackwell 수요와 공급 확대",
+      "데이터센터 매출과 마진 동반 개선"
+    ],
+    "negative": [
+      "AI capex 소화 국면",
+      "고객사 자체 ASIC 전환",
+      "중국 수출통제 강화"
+    ],
+    "watch": [
+      "hyperscaler capex",
+      "data center revenue",
+      "HBM supply",
+      "CoWoS capacity",
+      "China export controls"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "semiconductors",
+    "ai_infrastructure"
+  ],
+  "trusted_sources": [
+    {
+      "name": "NVIDIA Newsroom",
+      "domain": "nvidianews.nvidia.com",
+      "tier": 1,
+      "why": "회사 공식 발표"
+    },
+    {
+      "name": "NVIDIA Investor Relations",
+      "domain": "investor.nvidia.com",
+      "tier": 1,
+      "why": "회사 공식 실적/IR"
+    }
+  ],
+  "why_it_matters": "NVDA는 AI 인프라 체인의 병목에 가까운 종목입니다. 고객 capex, GPU/네트워킹 수요, HBM/CoWoS 공급, 수출통제가 같은 방향이면 강하지만, capex 과열이나 자체칩 전환 신호가 커지면 다시 봐야 합니다.",
+  "watch_queries": [
+    {
+      "query": "Nvidia Blackwell demand gross margin",
+      "why": "차세대 GPU 수요와 마진 지속성을 확인"
+    },
+    {
+      "query": "Nvidia data center revenue HBM CoWoS",
+      "why": "AI 데이터센터 매출과 공급 병목을 확인"
+    },
+    {
+      "query": "Nvidia export controls China",
+      "why": "중국 매출과 지정학 리스크를 확인"
+    },
+    {
+      "query": "AI capex hyperscalers Nvidia",
+      "why": "빅테크 투자 사이클이 계속 강한지 확인"
+    }
+  ],
+  "positive_triggers": [
+    "Blackwell demand",
+    "data center revenue",
+    "gross margin",
+    "supply allocation",
+    "CUDA",
+    "hyperscaler capex"
+  ],
+  "negative_triggers": [
+    "export controls",
+    "gross margin decline",
+    "custom ASIC",
+    "capex slowdown",
+    "supply constraint",
+    "China restrictions"
+  ],
+  "chain": [
+    {
+      "from": "하이퍼스케일러 AI capex",
+      "to": "GPU/네트워킹 수요",
+      "why": "MSFT, AMZN, GOOG, META가 투자를 늘리면 NVDA 데이터센터 매출의 가시성이 높아집니다."
+    },
+    {
+      "from": "HBM/CoWoS 공급",
+      "to": "출하량과 마진",
+      "why": "메모리와 패키징이 부족하면 수요가 있어도 매출 인식이 늦어지고 비용 구조가 흔들릴 수 있습니다."
+    },
+    {
+      "from": "고객사 자체 ASIC",
+      "to": "장기 경쟁 강도",
+      "why": "빅테크가 자체칩 비중을 높이면 일부 워크로드에서 NVDA 의존도가 낮아질 수 있습니다."
+    },
+    {
+      "from": "미중 수출통제",
+      "to": "중국 매출과 제품 믹스",
+      "why": "규제가 강해질수록 중국용 제품 설계와 매출 안정성이 흔들립니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "AMD",
+      "name": "Advanced Micro Devices",
+      "tradingview_symbol": "NASDAQ-AMD",
+      "why": "AI GPU의 가장 직접적인 경쟁자입니다."
+    },
+    {
+      "ticker": "AVGO",
+      "name": "Broadcom",
+      "tradingview_symbol": "NASDAQ-AVGO",
+      "why": "AI 네트워킹과 고객 맞춤 ASIC 흐름을 같이 봐야 합니다."
+    },
+    {
+      "ticker": "TSM",
+      "name": "Taiwan Semiconductor",
+      "tradingview_symbol": "NYSE-TSM",
+      "why": "NVDA 칩 생산과 첨단 공정 공급망의 핵심입니다."
+    },
+    {
+      "ticker": "MU",
+      "name": "Micron",
+      "tradingview_symbol": "NASDAQ-MU",
+      "why": "HBM 공급과 AI 메모리 사이클을 확인하기 좋습니다."
+    },
+    {
+      "ticker": "ASML",
+      "name": "ASML",
+      "tradingview_symbol": "NASDAQ-ASML",
+      "why": "첨단 반도체 장비와 장기 공급능력을 보여줍니다."
+    },
+    {
+      "ticker": "VRT",
+      "name": "Vertiv",
+      "tradingview_symbol": "NYSE-VRT",
+      "why": "AI 데이터센터 전력/냉각 인프라 수요를 같이 확인합니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "데이터센터 매출과 가이던스",
+      "why": "AI 수요가 실제 실적으로 이어지는 가장 직접적인 지표입니다.",
+      "positive": "성장과 가이던스가 계속 상향되면 강한 홀드 신호입니다.",
+      "negative": "가이던스가 꺾이면 AI capex 소화 국면을 의심해야 합니다."
+    },
+    {
+      "name": "총마진",
+      "why": "공급 부족 프리미엄과 제품 믹스의 질을 보여줍니다.",
+      "positive": "높은 마진이 유지되면 가격결정력이 살아있다는 뜻입니다.",
+      "negative": "마진이 꺾이면 경쟁, 원가, 제품 전환 비용을 확인해야 합니다."
+    },
+    {
+      "name": "HBM/CoWoS 공급",
+      "why": "GPU 수요가 매출로 바뀌려면 메모리와 패키징 병목이 풀려야 합니다.",
+      "positive": "공급 확대가 확인되면 출하와 매출 가시성이 좋아집니다.",
+      "negative": "병목이 지속되면 실적 인식이 늦고 고객 대기 시간이 길어집니다."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "sector": "Technology",
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "semiconductors",
+    "ai_infrastructure"
+  ],
+  "themes": [
+    "AI accelerator",
+    "data center",
+    "HBM",
+    "advanced packaging",
+    "export controls"
+  ],
+  "positive_triggers": [
+    "data center revenue",
+    "hyperscaler capex",
+    "gross margin"
+  ],
+  "negative_triggers": [
+    "export controls",
+    "capex slowdown",
+    "custom ASIC"
+  ]
+}
