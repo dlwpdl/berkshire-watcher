@@ -117,7 +117,7 @@ async function collectEvents(items, sources) {
     }
   }
 
-  return enrichEvents(dedupeEvents(all).slice(0, 80));
+  return enrichEvents(recentEvents(dedupeEvents(all)).slice(0, 80));
 }
 
 function buildQueries(item, sources) {
@@ -301,10 +301,25 @@ function parseRss(xml) {
       source: decodeXml(extractXml(block, 'source')) || 'Google News',
       sourceDomain: domainFromUrl(decodeXml(extractXmlAttr(block, 'source', 'url'))),
       url: decodeXml(extractXml(block, 'link')),
+      publishedAt: toIsoDate(decodeXml(extractXml(block, 'pubDate'))),
     });
   }
 
   return items;
+}
+
+function recentEvents(events, now = Date.now()) {
+  return events
+    .filter(event => isRecentEvent(event, now))
+    .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+}
+
+function isRecentEvent(event, now = Date.now()) {
+  const maxAgeHours = Number(process.env.NEWS_MAX_AGE_HOURS || 48);
+  const published = Date.parse(event.publishedAt || '');
+  return Number.isFinite(published)
+    && published <= now + 5 * 60 * 1000
+    && now - published <= maxAgeHours * 60 * 60 * 1000;
 }
 
 async function analyzeItem(item, events, sources) {
@@ -794,6 +809,11 @@ function domainFromUrl(url) {
   }
 }
 
+function toIsoDate(value) {
+  const time = Date.parse(value || '');
+  return Number.isFinite(time) ? new Date(time).toISOString() : '';
+}
+
 function uniqueBy(items, keyFn) {
   const seen = new Set();
   return items.filter(item => {
@@ -826,6 +846,13 @@ function selfTest() {
     sector_cycle: { positive: ['demand'], negative: ['slowdown'] },
   }), /좋게 볼 때는 demand/);
   assert.equal(formatChain([{ from: 'A', to: 'B', why: 'C.' }]), '- A 흐름은 B에 바로 이어집니다. C.');
+  assert.deepEqual(
+    recentEvents([
+      { title: 'old', publishedAt: '2026-06-29T00:00:00.000Z' },
+      { title: 'new', publishedAt: '2026-07-01T00:00:00.000Z' },
+    ], Date.parse('2026-07-02T00:00:00.000Z')).map(event => event.title),
+    ['new'],
+  );
 }
 
 main().catch(error => {

@@ -115,6 +115,8 @@ CRCL은 일시중지.
 
 기본값은 `REQUIRE_ARTICLE_BODY=1`입니다. 본문을 확보하지 못한 기사는 알림 후보에서 제외합니다. 임시 디버깅 때만 `REQUIRE_ARTICLE_BODY=0`으로 제목/RSS 요약 기반 알림을 허용합니다.
 
+기본값은 `NEWS_MAX_AGE_HOURS=48`입니다. Google News RSS의 발행시각이 이 범위를 벗어난 기사는 오래된 뉴스로 보고 알림 후보에서 제외합니다.
+
 소스 관리는 종목마다 복사하지 않습니다. `data/sources.json`의 재사용 그룹을 템플릿이 고르고, 종목별 `trusted_sources`에는 회사 공식 IR/뉴스룸처럼 그 종목에만 붙는 원문 출처만 둡니다.
 
 소스 우선순위:
