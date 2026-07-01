@@ -448,7 +448,12 @@ function actionFor(item, score, direction, matches = {}) {
 async function formatAlert(alert) {
   const { item, event, score, direction, action } = alert;
   const icon = { positive: '🟢', negative: '🔴', mixed: '🟡', unknown: '⚪' }[direction] || '⚪';
-  const directionLabel = { positive: '긍정', negative: '부정', mixed: '혼합', unknown: '불명' }[direction] || '불명';
+  const directionLabel = {
+    positive: '긍정',
+    negative: '부정',
+    mixed: '혼합(긍정/부정 동시)',
+    unknown: '불명',
+  }[direction] || '불명';
   const title = `[${item.ticker}]${item.name || item.ticker}`;
   const newsTitle = cleanNewsText(event.title, event.source);
   const newsSummary = cleanNewsText(event.summary, event.source);
@@ -461,7 +466,7 @@ async function formatAlert(alert) {
     : translatedSummary;
 
   return [
-    `${icon} T${score} · ${escapeHtml(title)} · ${directionLabel} · ${action}`,
+    `${icon} T${score}/10 · ${escapeHtml(title)} · ${directionLabel} · ${action}`,
     '',
     `<b>제목</b>\n${escapeHtml(translatedTitle)}`,
     '',
@@ -626,20 +631,24 @@ function escapeRegExp(value) {
 function formatSectorCycle(item) {
   if (!item.sector && !item.sector_cycle) return '- 아직 등록된 섹터 순환 설명이 없습니다.';
 
-  const lines = [
-    `- 섹터: ${escapeHtml([item.sector, item.subsector].filter(Boolean).join(' / '))}`,
-  ];
-  if (item.portfolios?.length) lines.push(`- 포트폴리오: ${escapeHtml(item.portfolios.join(' / '))}`);
-  if (item.sector_cycle?.why) lines.push(`- 왜 봄: ${escapeHtml(item.sector_cycle.why)}`);
-  if (item.sector_cycle?.positive?.length) lines.push(`- 긍정: ${escapeHtml(item.sector_cycle.positive.slice(0, 2).join(' / '))}`);
-  if (item.sector_cycle?.negative?.length) lines.push(`- 부정: ${escapeHtml(item.sector_cycle.negative.slice(0, 2).join(' / '))}`);
+  const sector = [item.sector, item.subsector].filter(Boolean).join(' / ');
+  const lines = [];
+  if (sector) lines.push(`- ${escapeHtml(sector)} 흐름 안에서 봅니다.`);
+  if (item.portfolios?.length) lines.push(`- 이 종목은 ${escapeHtml(item.portfolios.join(', '))} 관점에서도 함께 봅니다.`);
+  if (item.sector_cycle?.why) lines.push(`- ${escapeHtml(item.sector_cycle.why)}`);
+  if (item.sector_cycle?.positive?.length) {
+    lines.push(`- 좋게 볼 때는 ${escapeHtml(item.sector_cycle.positive.slice(0, 2).join(', '))} 같은 신호가 같이 나와야 합니다.`);
+  }
+  if (item.sector_cycle?.negative?.length) {
+    lines.push(`- 반대로 다음 신호가 보이면 투자 논리를 다시 확인해야 합니다: ${escapeHtml(item.sector_cycle.negative.slice(0, 2).join(', '))}.`);
+  }
   return lines.join('\n');
 }
 
 function formatChain(chain) {
   if (chain.length === 0) return '- 아직 등록된 체인 설명이 없습니다.';
   return chain.slice(0, 5)
-    .map(step => `- ${escapeHtml(step.from)} → ${escapeHtml(step.to)}: ${escapeHtml(step.why)}`)
+    .map(step => `- ${escapeHtml(step.from)} 흐름은 ${escapeHtml(step.to)}에 바로 이어집니다. ${escapeHtml(step.why)}`)
     .join('\n');
 }
 
@@ -812,6 +821,11 @@ function selfTest() {
     summarizeArticleBody('First sentence. Second sentence. Third sentence. Fourth sentence.'),
     'First sentence. Second sentence. Third sentence.',
   );
+  assert.match(formatSectorCycle({
+    sector: 'Technology',
+    sector_cycle: { positive: ['demand'], negative: ['slowdown'] },
+  }), /좋게 볼 때는 demand/);
+  assert.equal(formatChain([{ from: 'A', to: 'B', why: 'C.' }]), '- A 흐름은 B에 바로 이어집니다. C.');
 }
 
 main().catch(error => {
