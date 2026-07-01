@@ -7,6 +7,11 @@ on:
     # KST 20:00 = UTC 11:00
     - cron: "0 11 * * *"
   workflow_dispatch:
+    inputs:
+      events_file:
+        description: "Optional events JSON file for one-off manual sends"
+        required: false
+        default: ""
 
 jobs:
   send:
@@ -16,8 +21,17 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "24"
-      - run: npm run send
+      - run: |
+          if [ -n "$EVENTS_FILE" ]; then
+            npm run send -- --events "$EVENTS_FILE"
+          else
+            npm run send
+          fi
         env:
+          EVENTS_FILE: ${{ github.event.inputs.events_file }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+          MINIMAX_API_URL: https://integrate.api.nvidia.com/v1/chat/completions
+          MINIMAX_MODEL: minimaxai/minimax-m3
           MIN_T_SCORE: "6"

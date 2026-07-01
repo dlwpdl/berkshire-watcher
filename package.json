@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "send": "node src/berkshire-watcher.js",
-    "check": "node src/berkshire-watcher.js --events data/events.sample.json --dry-run"
+    "check": "node src/berkshire-watcher.js --self-test && node src/berkshire-watcher.js --events data/events.sample.json --dry-run"
   },
   "engines": {
     "node": ">=20"

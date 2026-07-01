@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 
 const DEFAULT_PORTFOLIO = 'data/portfolio.json';
@@ -5,9 +6,15 @@ const DEFAULT_SOURCES = 'data/sources.json';
 const DEFAULT_PROFILES_DIR = 'data/profiles';
 const DEFAULT_TEMPLATES_DIR = 'data/templates';
 const MAX_MESSAGE_LENGTH = 3900;
+const USER_AGENT = 'Mozilla/5.0 berkshire-watcher/0.1';
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args.selfTest) {
+    selfTest();
+    return;
+  }
+
   const portfolio = await readJson(args.portfolio || DEFAULT_PORTFOLIO);
   const items = await loadPortfolioItems(portfolio.items || []);
   const sources = await readOptionalJson(args.sources || DEFAULT_SOURCES, { groups: {} });
@@ -15,9 +22,9 @@ async function main() {
     ? await readJson(args.events)
     : await collectEvents(items, sources);
 
-  const alerts = items
+  const alerts = (await Promise.all(items
     .filter(item => item.status !== 'paused')
-    .map(item => analyzeItem(item, events, sources))
+    .map(item => analyzeItem(item, events, sources))))
     .filter(Boolean)
     .sort((a, b) => b.score - a.score);
 
@@ -38,6 +45,7 @@ function parseArgs(args) {
   const parsed = { dryRun: false };
   for (let i = 0; i < args.length; i += 1) {
     if (args[i] === '--dry-run') parsed.dryRun = true;
+    else if (args[i] === '--self-test') parsed.selfTest = true;
     else if (args[i] === '--portfolio') parsed.portfolio = args[++i];
     else if (args[i] === '--sources') parsed.sources = args[++i];
     else if (args[i] === '--events') parsed.events = args[++i];
@@ -109,7 +117,7 @@ async function collectEvents(items, sources) {
     }
   }
 
-  return dedupeEvents(all).slice(0, 80);
+  return enrichEvents(dedupeEvents(all).slice(0, 80));
 }
 
 function buildQueries(item, sources) {
@@ -143,7 +151,7 @@ function sourcesForItem(item, sources) {
 async function fetchGoogleNews(query) {
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
   const response = await fetch(url, {
-    headers: { 'User-Agent': 'berkshire-watcher/0.1' },
+    headers: { 'User-Agent': USER_AGENT },
   });
 
   if (!response.ok) {
@@ -152,6 +160,132 @@ async function fetchGoogleNews(query) {
   }
 
   return parseRss(await response.text());
+}
+
+async function enrichEvents(events) {
+  const limit = Number(process.env.MAX_ARTICLE_FETCHES || 30);
+  const enriched = [];
+
+  for (const event of events) {
+    if (enriched.length >= limit) {
+      enriched.push(event);
+      continue;
+    }
+
+    enriched.push(await enrichEvent(event));
+    await sleep(150);
+  }
+
+  return enriched;
+}
+
+async function enrichEvent(event) {
+  try {
+    const articleUrl = await resolveArticleUrl(event.url);
+    const body = articleUrl ? await fetchArticleText(articleUrl) : '';
+    return { ...event, url: articleUrl || event.url, articleChecked: true, ...(body ? { body } : {}) };
+  } catch (error) {
+    console.warn(`Article fetch failed for "${event.title}": ${error.message}`);
+    return { ...event, articleChecked: true };
+  }
+}
+
+async function resolveArticleUrl(url) {
+  if (!url || !domainFromUrl(url).endsWith('news.google.com')) return url;
+
+  const response = await fetch(url, {
+    headers: { 'User-Agent': USER_AGENT },
+    signal: AbortSignal.timeout(Number(process.env.ARTICLE_TIMEOUT_MS || 8000)),
+  });
+  if (!response.ok) return url;
+
+  const html = await response.text();
+  const articleId = html.match(/data-n-a-id="([^"]+)"/)?.[1];
+  const timestamp = html.match(/data-n-a-ts="([^"]+)"/)?.[1];
+  const signature = html.match(/data-n-a-sg="([^"]+)"/)?.[1];
+  if (!articleId || !timestamp || !signature) return url;
+
+  return decodeGoogleNewsUrl(articleId, timestamp, signature) || url;
+}
+
+async function decodeGoogleNewsUrl(articleId, timestamp, signature) {
+  const rpc = JSON.stringify([[[
+    'Fbv4je',
+    JSON.stringify([
+      'garturlreq',
+      [['en-US', 'US', ['FINANCE_TOP_INDICES', 'WEB_TEST_1_0_0'], null, null, 1, 1, 'US:en', null, 180, null, null, null, null, null, 0, null, null, [1608992183, 723341000]]],
+      'en-US',
+      'US',
+      1,
+      [2, 3, 4, 8],
+      1,
+      0,
+      '655000234',
+      0,
+      0,
+      null,
+      0,
+      articleId,
+      Number(timestamp),
+      signature,
+    ]),
+    null,
+    'generic',
+  ]]]);
+
+  const response = await fetch('https://news.google.com/_/DotsSplashUi/data/batchexecute?rpcids=Fbv4je', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      'User-Agent': USER_AGENT,
+    },
+    body: new URLSearchParams({ 'f.req': rpc }),
+    signal: AbortSignal.timeout(Number(process.env.ARTICLE_TIMEOUT_MS || 8000)),
+  });
+  if (!response.ok) return '';
+
+  const text = await response.text();
+  const payload = JSON.parse(text.slice(text.indexOf('[')));
+  const result = JSON.parse(payload.find(entry => entry[1] === 'Fbv4je')?.[2] || '[]');
+  return result[1] || '';
+}
+
+async function fetchArticleText(url) {
+  const response = await fetch(url, {
+    headers: { 'User-Agent': USER_AGENT },
+    signal: AbortSignal.timeout(Number(process.env.ARTICLE_TIMEOUT_MS || 8000)),
+  });
+  if (!response.ok || !response.headers.get('content-type')?.includes('text/html')) return '';
+
+  return extractArticleText(await response.text());
+}
+
+function extractArticleText(html) {
+  const block = extractHtmlBlock(html, 'article') || extractHtmlBlock(html, 'main') || html;
+  const cleaned = block
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, ' ')
+    .replace(/<svg[\s\S]*?<\/svg>/gi, ' ');
+  const paragraphs = uniqueBy(
+    [...cleaned.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+      .map(match => stripHtml(match[1]))
+      .filter(isArticleParagraph),
+    paragraph => paragraph,
+  );
+
+  return truncateText(paragraphs.join('\n'), Number(process.env.MAX_ARTICLE_CHARS || 6000));
+}
+
+function extractHtmlBlock(html, tag) {
+  return html.match(new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'))?.[1] || '';
+}
+
+function isArticleParagraph(text) {
+  const value = String(text || '').trim();
+  return value.length >= 40
+    && !/^(advertisement|subscribe|sign up|by submitting|all rights reserved)\b/i.test(value)
+    && !/(privacy policy|cookie policy|terms of service)/i.test(value);
 }
 
 function parseRss(xml) {
@@ -173,24 +307,36 @@ function parseRss(xml) {
   return items;
 }
 
-function analyzeItem(item, events, sources) {
+async function analyzeItem(item, events, sources) {
+  const minScore = Number(process.env.MIN_T_SCORE || 5);
   const scored = events
     .filter(event => event.portfolioTicker === item.ticker || eventMatchesItem(event, item))
     .map(event => scoreEvent(item, event, sources))
-    .filter(result => result.score >= Number(process.env.MIN_T_SCORE || 5))
+    .filter(result => result.score >= minScore)
     .sort((a, b) => b.score - a.score);
 
   if (scored.length === 0) return null;
 
-  const top = scored[0];
-  return {
-    item,
-    event: top.event,
-    score: top.score,
-    direction: top.direction,
-    action: actionFor(item, top.score, top.direction, top.matches),
-    matches: top.matches,
-  };
+  for (const candidate of scored) {
+    let top = candidate;
+    if (top.matches.content !== 'article_body' && !top.event.articleChecked) {
+      const enriched = await enrichEvent(top.event);
+      if (enriched !== top.event) top = scoreEvent(item, enriched, sources);
+    }
+    if (top.score < minScore) continue;
+    if (articleBodyRequired() && top.matches.content !== 'article_body') continue;
+
+    return {
+      item,
+      event: top.event,
+      score: top.score,
+      direction: top.direction,
+      action: actionFor(item, top.score, top.direction, top.matches),
+      matches: top.matches,
+    };
+  }
+
+  return null;
 }
 
 function eventMatchesItem(event, item) {
@@ -243,14 +389,20 @@ function scoreEvent(item, event, sources) {
 function eventContentText(event) {
   const title = cleanNewsText(event.title, event.source);
   const summary = cleanNewsText(event.summary, event.source);
-  return isSameNewsText(title, summary) ? title : `${title} ${summary}`;
+  const body = String(event.body || '').trim();
+  return [title, isSameNewsText(title, summary) ? '' : summary, body].filter(Boolean).join(' ');
 }
 
 function contentQuality(event) {
   const title = cleanNewsText(event.title, event.source);
   const summary = cleanNewsText(event.summary, event.source);
+  if (event.body) return 'article_body';
   if (!summary || isSameNewsText(title, summary)) return 'title_only';
   return 'rss_summary';
+}
+
+function articleBodyRequired() {
+  return process.env.REQUIRE_ARTICLE_BODY !== '0';
 }
 
 function findKnownSource(event, item, sources) {
@@ -301,8 +453,10 @@ async function formatAlert(alert) {
   const newsTitle = cleanNewsText(event.title, event.source);
   const newsSummary = cleanNewsText(event.summary, event.source);
   const translatedTitle = await translateNewsText(newsTitle);
-  const translatedSummary = await translateNewsText(newsSummary);
-  const summary = !translatedSummary || isSameNewsText(translatedTitle, translatedSummary)
+  const translatedSummary = await summarizeNewsText(event, newsSummary);
+  const summary = event.body
+    ? translatedSummary
+    : !translatedSummary || isSameNewsText(translatedTitle, translatedSummary)
     ? fallbackSummary(alert)
     : translatedSummary;
 
@@ -332,20 +486,40 @@ async function formatAlert(alert) {
 }
 
 function fallbackSummary(alert) {
-  const { item, event, matches } = alert;
-  const factors = [
-    ...(matches?.positive || []),
-    ...(matches?.negative || []),
-    ...(matches?.themes || []),
-  ].slice(0, 3);
-  const factorText = factors.length ? `${factors.join(', ')} 요인과 연결됩니다` : `${item.ticker} 감시 쿼리에서 잡힌 이슈입니다`;
+  const { event } = alert;
   const queryText = event.query ? ` 감시 쿼리: ${event.query}.` : '';
-  return `RSS에 본문 요약이 없어 제목 기준으로 판단합니다. ${factorText}.${queryText}`;
+  return `본문을 확보하지 못해 제목/RSS 요약만 표시합니다. 원문 확인이 필요합니다.${queryText}`;
+}
+
+function summarizeArticleBody(body) {
+  const text = String(body || '').replace(/\s+/g, ' ').trim();
+  const sentences = text.match(/[^.!?。！？]+[.!?。！？]+(?=\s|$)/g) || [];
+  return truncateText((sentences.slice(0, 3).map(sentence => sentence.trim()).join(' ') || text), 900);
+}
+
+async function summarizeNewsText(event, rssSummary) {
+  if (event.body && miniMaxEnabled() && process.env.TRANSLATE_NEWS !== '0') {
+    const summary = await summarizeArticleWithMiniMax(event.title, event.body);
+    if (summary) return summary;
+  }
+
+  return translateNewsText(event.body ? summarizeArticleBody(event.body) : rssSummary);
 }
 
 async function translateNewsText(text) {
   const value = String(text || '').trim();
   if (!value || /[가-힣]/.test(value) || process.env.TRANSLATE_NEWS === '0') return value;
+
+  if (miniMaxEnabled()) {
+    const translated = await miniMaxChat([
+      'Translate this news text into natural Korean.',
+      'Keep tickers, numbers, company names, and quoted product names intact.',
+      'Return only the translation.',
+      '',
+      value,
+    ].join('\n'), 700);
+    if (translated) return translated;
+  }
 
   try {
     const url = new URL('https://translate.googleapis.com/translate_a/single');
@@ -356,13 +530,59 @@ async function translateNewsText(text) {
       dt: 't',
       q: value,
     });
-    const response = await fetch(url, { headers: { 'User-Agent': 'berkshire-watcher/0.1' } });
+    const response = await fetch(url, { headers: { 'User-Agent': USER_AGENT } });
     if (!response.ok) return value;
     const body = await response.json();
     return body?.[0]?.map(part => part?.[0] || '').join('') || value;
   } catch {
     return value;
   }
+}
+
+async function summarizeArticleWithMiniMax(title, body) {
+  return miniMaxChat([
+    '아래 기사 본문만 근거로 한국어 요약을 작성해.',
+    '추측하지 말고 기사에 나온 사실만 써.',
+    '투자자가 바로 읽을 수 있게 2~3문장으로 간결하게 써.',
+    '티커, 회사명, 숫자, 제품명은 보존해.',
+    '',
+    `제목: ${title}`,
+    '',
+    `본문: ${truncateText(body, 6000)}`,
+  ].join('\n'), 900);
+}
+
+async function miniMaxChat(prompt, maxTokens) {
+  try {
+    const apiUrl = process.env.MINIMAX_API_URL || `${(process.env.MINIMAX_BASE_URL || 'https://integrate.api.nvidia.com/v1').replace(/\/$/, '')}/chat/completions`;
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.MINIMAX_API_KEY}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: process.env.MINIMAX_MODEL || 'minimaxai/minimax-m3',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.2,
+        top_p: 0.95,
+        max_tokens: maxTokens,
+        stream: false,
+      }),
+      signal: AbortSignal.timeout(Number(process.env.MINIMAX_TIMEOUT_MS || 20000)),
+    });
+    if (!response.ok) return '';
+
+    const body = await response.json();
+    return String(body.choices?.[0]?.message?.content || '').trim();
+  } catch {
+    return '';
+  }
+}
+
+function miniMaxEnabled() {
+  return Boolean(process.env.MINIMAX_API_KEY);
 }
 
 function formatEventSource(event, source) {
@@ -381,6 +601,7 @@ function formatAnalysisFactors(matches) {
   if (matches.source?.name) lines.push(`- 출처신뢰: ${escapeHtml(matches.source.name)} tier ${escapeHtml(matches.source.tier || '?')}`);
   if (matches.content === 'title_only') lines.push('- 본문: 제목 중심이라 원문 확인 필요');
   if (matches.content === 'rss_summary') lines.push('- 본문: RSS 요약 반영');
+  if (matches.content === 'article_body') lines.push('- 본문: 원문 본문 반영');
   return lines.length ? lines.join('\n') : '- 직접 트리거보다는 등록된 감시 쿼리/출처 신뢰도로 잡힌 이슈입니다.';
 }
 
@@ -526,8 +747,15 @@ function decodeXml(text) {
   return text
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
     .replace(/&amp;/g, '&')
     .replace(/&nbsp;/g, ' ')
+    .replace(/&rsquo;/g, "'")
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rdquo;/g, '"')
+    .replace(/&ldquo;/g, '"')
+    .replace(/&mdash;/g, '-')
+    .replace(/&ndash;/g, '-')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
@@ -536,6 +764,13 @@ function decodeXml(text) {
 
 function stripHtml(text) {
   return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function truncateText(text, max) {
+  const value = String(text || '').trim();
+  if (value.length <= max) return value;
+  const index = value.lastIndexOf(' ', max);
+  return `${value.slice(0, index > max * 0.6 ? index : max).trim()}...`;
 }
 
 function normalize(value) {
@@ -566,6 +801,17 @@ function dedupeEvents(events) {
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function selfTest() {
+  const html = '<main><p>Short.</p><p>Nvidia said the new chip orders reached one billion dollars. The company added that customer testing has started. Investors are watching whether inference costs fall.</p></main>';
+  const body = extractArticleText(html);
+  assert.match(body, /new chip orders/);
+  assert.equal(contentQuality({ title: 'Nvidia orders', summary: 'Nvidia orders', body }), 'article_body');
+  assert.equal(
+    summarizeArticleBody('First sentence. Second sentence. Third sentence. Fourth sentence.'),
+    'First sentence. Second sentence. Third sentence.',
+  );
 }
 
 main().catch(error => {

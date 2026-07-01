@@ -19,6 +19,9 @@ npm run check
 ```bash
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_CHAT_ID=...
+MINIMAX_API_KEY=... # 선택: 있으면 기사 본문 한국어 요약/번역에 사용
+MINIMAX_API_URL=https://integrate.api.nvidia.com/v1/chat/completions
+MINIMAX_MODEL=minimaxai/minimax-m3
 npm run send
 ```
 
@@ -106,7 +109,13 @@ CRCL은 일시중지.
 
 ## Sources
 
-현재 기사 본문을 직접 긁지 않습니다. 기본 수집은 Google News RSS이고, `data/sources.json`의 저명한 도메인을 `site:` 검색으로 섞습니다.
+기본 수집은 Google News RSS이고, 접근 가능한 기사 URL은 원문 HTML 본문을 읽어 점수와 내용 요약에 반영합니다. 유료벽/차단/본문 추출 실패 기사는 기본적으로 알림 후보에서 제외합니다.
+
+`MINIMAX_API_KEY`가 있으면 NVIDIA OpenAI 호환 endpoint의 `minimaxai/minimax-m3`로 본문 기반 한국어 요약/번역을 만들고, 없으면 기존 Google 번역 fallback을 사용합니다. 필요하면 `MINIMAX_API_URL`, `MINIMAX_MODEL`, `MAX_ARTICLE_FETCHES`로 조정합니다.
+
+기본값은 `REQUIRE_ARTICLE_BODY=1`입니다. 본문을 확보하지 못한 기사는 알림 후보에서 제외합니다. 임시 디버깅 때만 `REQUIRE_ARTICLE_BODY=0`으로 제목/RSS 요약 기반 알림을 허용합니다.
+
+소스 관리는 종목마다 복사하지 않습니다. `data/sources.json`의 재사용 그룹을 템플릿이 고르고, 종목별 `trusted_sources`에는 회사 공식 IR/뉴스룸처럼 그 종목에만 붙는 원문 출처만 둡니다.
 
 소스 우선순위:
 

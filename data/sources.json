@@ -17,6 +17,18 @@
         "why": "미국 규정/정책 원문"
       },
       {
+        "name": "U.S. Department of Justice",
+        "domain": "justice.gov",
+        "tier": 1,
+        "why": "반독점/경쟁정책 공식 출처"
+      },
+      {
+        "name": "Federal Trade Commission",
+        "domain": "ftc.gov",
+        "tier": 1,
+        "why": "경쟁/소비자보호 규제 공식 출처"
+      },
+      {
         "name": "U.S. Department of Commerce",
         "domain": "commerce.gov",
         "tier": 1,
@@ -43,22 +55,22 @@
         "why": "글로벌 시장 뉴스 1차급"
       },
       {
-        "name": "Bloomberg",
-        "domain": "bloomberg.com",
+        "name": "Associated Press",
+        "domain": "apnews.com",
         "tier": 1,
-        "why": "시장/정책/기업 뉴스 상위권"
+        "why": "접근 가능한 글로벌 뉴스 원문"
       },
       {
-        "name": "Financial Times",
-        "domain": "ft.com",
+        "name": "Business Wire",
+        "domain": "businesswire.com",
         "tier": 1,
-        "why": "글로벌 금융/정책 해설"
+        "why": "회사 공식 보도자료 원문"
       },
       {
-        "name": "Wall Street Journal",
-        "domain": "wsj.com",
+        "name": "PR Newswire",
+        "domain": "prnewswire.com",
         "tier": 1,
-        "why": "기업/시장 뉴스 상위권"
+        "why": "회사 공식 보도자료 원문"
       },
       {
         "name": "CNBC",
@@ -71,21 +83,9 @@
         "domain": "finance.yahoo.com",
         "tier": 2,
         "why": "시장 뉴스 집계와 주가 반응 확인"
-      },
-      {
-        "name": "Barron's",
-        "domain": "barrons.com",
-        "tier": 2,
-        "why": "투자자 관점 해설"
       }
     ],
     "ai_infrastructure": [
-      {
-        "name": "SemiAnalysis",
-        "domain": "semianalysis.com",
-        "tier": 2,
-        "why": "AI 인프라/반도체 공급망 심층 분석"
-      },
       {
         "name": "Data Center Dynamics",
         "domain": "datacenterdynamics.com",
@@ -97,6 +97,18 @@
         "domain": "nextplatform.com",
         "tier": 2,
         "why": "AI 서버/HPC 인프라 전문 해설"
+      },
+      {
+        "name": "ServeTheHome",
+        "domain": "servethehome.com",
+        "tier": 2,
+        "why": "AI 서버/데이터센터 하드웨어 전문 해설"
+      },
+      {
+        "name": "HPCwire",
+        "domain": "hpcwire.com",
+        "tier": 2,
+        "why": "HPC/AI 인프라 전문 보도"
       },
       {
         "name": "TrendForce",
@@ -119,16 +131,28 @@
         "why": "메모리/HBM/반도체 가격과 공급 데이터"
       },
       {
-        "name": "DigiTimes",
-        "domain": "digitimes.com",
-        "tier": 2,
-        "why": "대만 반도체 공급망 전문 매체"
+        "name": "TSMC",
+        "domain": "tsmc.com",
+        "tier": 1,
+        "why": "첨단 공정/CoWoS 공급망 공식 발표"
       },
       {
-        "name": "AnandTech",
-        "domain": "anandtech.com",
+        "name": "SK hynix Newsroom",
+        "domain": "news.skhynix.com",
+        "tier": 1,
+        "why": "HBM 공급망 공식 발표"
+      },
+      {
+        "name": "Micron Newsroom",
+        "domain": "micron.com",
+        "tier": 1,
+        "why": "HBM/메모리 공급망 공식 발표"
+      },
+      {
+        "name": "EE Times",
+        "domain": "eetimes.com",
         "tier": 2,
-        "why": "칩 아키텍처/제품 해설"
+        "why": "반도체 산업/칩 설계 전문 보도"
       }
     ],
     "crypto_fintech": [
@@ -145,16 +169,22 @@
         "why": "금리/금융규제 공식 출처"
       },
       {
+        "name": "FINRA",
+        "domain": "finra.org",
+        "tier": 1,
+        "why": "브로커/증권영업 규제 공식 출처"
+      },
+      {
+        "name": "Consumer Financial Protection Bureau",
+        "domain": "consumerfinance.gov",
+        "tier": 1,
+        "why": "소비자금융 규제 공식 출처"
+      },
+      {
         "name": "CoinDesk",
         "domain": "coindesk.com",
         "tier": 2,
         "why": "크립토 시장/규제 전문 매체"
-      },
-      {
-        "name": "The Block",
-        "domain": "theblock.co",
-        "tier": 2,
-        "why": "크립토 거래량/시장 구조 전문"
       }
     ],
     "healthcare_pharma": [
@@ -171,10 +201,16 @@
         "why": "임상시험 공식 등록 데이터"
       },
       {
-        "name": "STAT",
-        "domain": "statnews.com",
-        "tier": 2,
-        "why": "바이오/헬스케어 전문 보도"
+        "name": "CMS",
+        "domain": "cms.gov",
+        "tier": 1,
+        "why": "Medicare/보험 커버리지/약가 정책 공식 출처"
+      },
+      {
+        "name": "European Medicines Agency",
+        "domain": "ema.europa.eu",
+        "tier": 1,
+        "why": "유럽 의약품 승인/안전성 공식 출처"
       },
       {
         "name": "Fierce Pharma",
