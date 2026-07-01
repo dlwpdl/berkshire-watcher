@@ -1,0 +1,149 @@
+{
+  "sector": "Technology",
+  "subsector": "Cybersecurity / Endpoint / XDR",
+  "themes": [
+    "endpoint security",
+    "XDR",
+    "Singularity platform",
+    "AI security",
+    "cloud security",
+    "ARR",
+    "net retention",
+    "cybersecurity consolidation"
+  ],
+  "sector_cycle": {
+    "why": "S는 보안 예산, 엔드포인트/XDR 경쟁, ARR 성장률, 수익성 전환 속도에 민감합니다.",
+    "positive": [
+      "ARR과 대형 고객 증가",
+      "순유지율 안정",
+      "영업마진과 현금흐름 개선"
+    ],
+    "negative": [
+      "청구액/ARR 성장 둔화",
+      "CrowdStrike/Microsoft와 가격 경쟁",
+      "보안 사고나 제품 신뢰도 훼손"
+    ],
+    "watch": [
+      "SentinelOne ARR growth",
+      "net retention rate",
+      "endpoint security competition",
+      "operating margin"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news"
+  ],
+  "trusted_sources": [
+    {
+      "name": "SentinelOne Investor Relations",
+      "domain": "investors.sentinelone.com",
+      "tier": 1,
+      "why": "회사 공식 발표/IR"
+    },
+    {
+      "name": "SentinelOne Blog",
+      "domain": "sentinelone.com",
+      "tier": 1,
+      "why": "제품/보안 리서치 공식 발표"
+    }
+  ],
+  "why_it_matters": "S는 AI 기반 엔드포인트 보안 플랫폼이 CrowdStrike, Microsoft 같은 강한 경쟁 속에서 ARR 성장과 수익성 전환을 동시에 보여줘야 하는 종목입니다. 성장률이 유지되며 손실이 줄면 긍정이고, 보안 예산 둔화나 가격 경쟁이 커지면 다시 봐야 합니다.",
+  "watch_queries": [
+    {
+      "query": "SentinelOne earnings ARR net retention margin",
+      "why": "ARR 성장과 수익성 전환을 확인"
+    },
+    {
+      "query": "SentinelOne Singularity AI cybersecurity platform",
+      "why": "AI 보안 제품 경쟁력을 확인"
+    },
+    {
+      "query": "SentinelOne CrowdStrike Microsoft endpoint security competition",
+      "why": "경쟁 강도와 가격 압박을 확인"
+    },
+    {
+      "query": "SentinelOne enterprise customer wins cybersecurity",
+      "why": "대형 고객 확대가 이어지는지 확인"
+    }
+  ],
+  "positive_triggers": [
+    "ARR growth",
+    "net retention",
+    "margin expansion",
+    "enterprise wins",
+    "free cash flow",
+    "AI security adoption"
+  ],
+  "negative_triggers": [
+    "billings slowdown",
+    "ARR slowdown",
+    "net retention decline",
+    "price competition",
+    "breach",
+    "guidance cut"
+  ],
+  "chain": [
+    {
+      "from": "보안 위협 증가",
+      "to": "엔드포인트/XDR 예산",
+      "why": "공격이 늘면 기업은 보안 플랫폼 지출을 줄이기 어렵습니다."
+    },
+    {
+      "from": "AI 탐지 성능",
+      "to": "대형 고객 수주와 유지율",
+      "why": "오탐을 줄이고 대응을 자동화하면 고객 이탈을 줄이고 업셀 기회가 생깁니다."
+    },
+    {
+      "from": "플랫폼 경쟁",
+      "to": "가격과 마진",
+      "why": "Microsoft와 CrowdStrike가 번들링을 강화하면 SentinelOne의 가격결정력이 약해질 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "CRWD",
+      "name": "CrowdStrike",
+      "tradingview_symbol": "NASDAQ-CRWD",
+      "why": "엔드포인트 보안의 가장 직접적인 비교 종목입니다."
+    },
+    {
+      "ticker": "PANW",
+      "name": "Palo Alto Networks",
+      "tradingview_symbol": "NASDAQ-PANW",
+      "why": "보안 플랫폼 통합과 대형 고객 예산 흐름을 봅니다."
+    },
+    {
+      "ticker": "ZS",
+      "name": "Zscaler",
+      "tradingview_symbol": "NASDAQ-ZS",
+      "why": "클라우드 보안 예산과 성장주 멀티플을 비교합니다."
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft",
+      "tradingview_symbol": "NASDAQ-MSFT",
+      "why": "Defender 번들링이 가격 경쟁을 만드는 핵심 변수입니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "ARR 성장률",
+      "why": "구독 보안 사업의 기본 체력을 보여줍니다.",
+      "positive": "ARR이 빠르게 늘면 플랫폼 채택이 살아있다는 뜻입니다.",
+      "negative": "둔화가 크면 경쟁이나 예산 압박을 확인해야 합니다."
+    },
+    {
+      "name": "순유지율",
+      "why": "기존 고객의 업셀과 이탈을 동시에 보여줍니다.",
+      "positive": "유지율이 안정되면 제품 가치가 확인됩니다.",
+      "negative": "하락하면 가격 경쟁이나 제품 만족도 문제를 의심해야 합니다."
+    },
+    {
+      "name": "영업마진/현금흐름",
+      "why": "고성장 소프트웨어가 자생적으로 커질 수 있는지 보는 지표입니다.",
+      "positive": "성장과 마진 개선이 같이 나오면 보유 논리가 강해집니다.",
+      "negative": "성장 둔화와 손실 확대가 같이 나오면 위험 신호입니다."
+    }
+  ]
+}

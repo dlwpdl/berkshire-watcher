@@ -1,0 +1,154 @@
+{
+  "sector": "Leveraged ETF",
+  "subsector": "Daily 3x U.S. Healthcare",
+  "themes": [
+    "healthcare sector",
+    "pharma",
+    "biotech",
+    "managed care",
+    "GLP-1",
+    "Medicare pricing",
+    "FDA approvals",
+    "3x leverage",
+    "daily reset"
+  ],
+  "sector_cycle": {
+    "why": "CURE는 헬스케어 섹터 일일 수익률을 3배로 추종하는 ETF라 대형 제약, 보험/관리의료, 바이오 임상, 약가정책에 민감합니다.",
+    "positive": [
+      "헬스케어 섹터 방어주 선호",
+      "대형 제약 파이프라인/FDA 승인",
+      "관리의료 비용률 안정"
+    ],
+    "negative": [
+      "약가 규제 강화",
+      "관리의료 비용률 악화",
+      "바이오 임상 실패와 변동성 드래그"
+    ],
+    "watch": [
+      "healthcare sector rally",
+      "Medicare drug pricing",
+      "FDA approvals",
+      "managed care medical cost ratio",
+      "volatility decay"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "healthcare_pharma"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Direxion",
+      "domain": "direxion.com",
+      "tier": 1,
+      "why": "ETF 공식 운용사 자료"
+    },
+    {
+      "name": "FDA",
+      "domain": "fda.gov",
+      "tier": 1,
+      "why": "의약품 승인/안전성 공식 출처"
+    }
+  ],
+  "why_it_matters": "CURE는 헬스케어 섹터 방향성에 3배 레버리지를 건 상품입니다. LLY 같은 대형 제약과 UNH 같은 관리의료가 같이 강하면 유리하지만, 약가 규제나 임상 실패, 섹터 횡보가 나오면 일일 리셋 드래그가 커질 수 있습니다.",
+  "watch_queries": [
+    {
+      "query": "Direxion CURE healthcare bull 3x ETF",
+      "why": "ETF 운용/리밸런싱 관련 변화를 확인"
+    },
+    {
+      "query": "healthcare sector rally pharma biotech FDA approvals",
+      "why": "헬스케어 섹터 상승 동력을 확인"
+    },
+    {
+      "query": "Medicare drug pricing healthcare stocks",
+      "why": "약가 규제 리스크를 확인"
+    },
+    {
+      "query": "managed care medical cost ratio UnitedHealth healthcare",
+      "why": "관리의료 비용률과 보험주 흐름을 확인"
+    }
+  ],
+  "positive_triggers": [
+    "healthcare rally",
+    "FDA approval",
+    "pipeline data",
+    "GLP-1 demand",
+    "defensive rotation",
+    "managed care recovery"
+  ],
+  "negative_triggers": [
+    "Medicare pricing",
+    "drug pricing pressure",
+    "trial failure",
+    "policy risk",
+    "medical cost ratio",
+    "sector selloff",
+    "volatility decay",
+    "daily reset drag"
+  ],
+  "chain": [
+    {
+      "from": "대형 제약 파이프라인",
+      "to": "헬스케어 섹터 수급",
+      "why": "FDA 승인과 임상 성공은 대형 제약 비중이 큰 헬스케어 ETF에 직접 영향을 줍니다."
+    },
+    {
+      "from": "약가/보험 정책",
+      "to": "마진과 멀티플",
+      "why": "Medicare 약가 압박이나 보험 비용률 상승은 섹터 전체 밸류에이션을 누를 수 있습니다."
+    },
+    {
+      "from": "헬스케어 일일 변동",
+      "to": "CURE 3배 수익률",
+      "why": "CURE는 일일 3배 상품이라 추세장에서는 강하지만 변동성 큰 횡보장에서는 복리 효과가 불리할 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "XLV",
+      "name": "Health Care Select Sector SPDR Fund",
+      "tradingview_symbol": "AMEX-XLV",
+      "why": "CURE의 기본 헬스케어 섹터 방향성을 확인합니다."
+    },
+    {
+      "ticker": "LLY",
+      "name": "Eli Lilly",
+      "tradingview_symbol": "NYSE-LLY",
+      "why": "GLP-1과 대형 제약 성장주의 핵심 축입니다."
+    },
+    {
+      "ticker": "UNH",
+      "name": "UnitedHealth",
+      "tradingview_symbol": "NYSE-UNH",
+      "why": "관리의료 비용률과 정책 리스크를 보여줍니다."
+    },
+    {
+      "ticker": "MRK",
+      "name": "Merck",
+      "tradingview_symbol": "NYSE-MRK",
+      "why": "대형 제약 파이프라인과 방어주 수급을 확인합니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "헬스케어 섹터 추세",
+      "why": "CURE는 일일 3배 상품이라 방향성이 가장 중요합니다.",
+      "positive": "XLV가 추세적으로 오르면 레버리지 효과가 살아납니다.",
+      "negative": "횡보와 급락이 반복되면 변동성 드래그가 커집니다."
+    },
+    {
+      "name": "FDA 승인/임상 데이터",
+      "why": "제약/바이오 비중이 큰 섹터 수급을 움직입니다.",
+      "positive": "대형 승인과 좋은 데이터는 섹터 모멘텀을 키웁니다.",
+      "negative": "임상 실패나 안전성 이슈는 섹터 전체를 누를 수 있습니다."
+    },
+    {
+      "name": "약가정책/관리의료 비용률",
+      "why": "헬스케어 마진과 정책 리스크를 같이 보여줍니다.",
+      "positive": "정책 부담이 완화되고 비용률이 안정되면 좋습니다.",
+      "negative": "약가 압박이나 비용률 악화는 다시 고려 신호입니다."
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "sector": "Leveraged ETF",
+  "subsector": "Daily 3x U.S. Financials",
+  "themes": [
+    "financials",
+    "banks",
+    "yield curve",
+    "credit spreads",
+    "loan growth",
+    "capital markets",
+    "3x leverage",
+    "daily reset"
+  ],
+  "sector_cycle": {
+    "why": "FAS는 금융주 일일 수익률을 3배로 추종하는 ETF라 은행 실적, 금리곡선, 신용위험, 시장 변동성에 크게 반응합니다.",
+    "positive": [
+      "금리곡선 정상화와 순이자마진 개선",
+      "신용손실 안정",
+      "자본시장/IB 활동 회복"
+    ],
+    "negative": [
+      "경기침체와 대손비용 증가",
+      "지역은행 예금 유출",
+      "횡보장 변동성으로 인한 일일 리셋 드래그"
+    ],
+    "watch": [
+      "financials sector rally",
+      "yield curve steepening",
+      "bank credit losses",
+      "regional bank deposits",
+      "volatility decay"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "crypto_fintech"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Direxion",
+      "domain": "direxion.com",
+      "tier": 1,
+      "why": "ETF 공식 운용사 자료"
+    }
+  ],
+  "why_it_matters": "FAS는 개별 기업이 아니라 금융 섹터 방향성에 3배 레버리지를 건 상품입니다. 금융주가 강하게 추세를 만들면 빠르게 좋아지지만, 횡보장과 급락장에서는 일일 리셋과 변동성 드래그가 손실을 키울 수 있습니다.",
+  "watch_queries": [
+    {
+      "query": "Direxion FAS financial bull 3x ETF",
+      "why": "ETF 운용/리밸런싱 관련 변화를 확인"
+    },
+    {
+      "query": "banks net interest margin yield curve financials",
+      "why": "금융주 핵심 실적 변수인 금리곡선을 확인"
+    },
+    {
+      "query": "regional banks deposit outflows credit losses",
+      "why": "은행권 신용/예금 리스크를 확인"
+    },
+    {
+      "query": "financials earnings capital markets activity",
+      "why": "증권/은행 실적과 자본시장 회복을 확인"
+    }
+  ],
+  "positive_triggers": [
+    "financials rally",
+    "yield curve steepening",
+    "bank earnings",
+    "credit quality",
+    "capital markets activity",
+    "Fed cuts"
+  ],
+  "negative_triggers": [
+    "credit losses",
+    "deposit outflows",
+    "recession risk",
+    "inverted yield curve",
+    "regional bank stress",
+    "volatility decay",
+    "daily reset drag"
+  ],
+  "chain": [
+    {
+      "from": "금리곡선",
+      "to": "은행 순이자마진",
+      "why": "장단기 금리차가 좋아지면 대출마진 기대가 살아나 금융주에 긍정적입니다."
+    },
+    {
+      "from": "신용손실과 예금 흐름",
+      "to": "은행주 리스크 프리미엄",
+      "why": "대손비용이나 예금 유출이 커지면 금융주 전체의 밸류에이션이 눌립니다."
+    },
+    {
+      "from": "금융주 일일 변동",
+      "to": "FAS 3배 수익률",
+      "why": "FAS는 일일 3배 상품이라 추세장에서는 강하지만 변동성 큰 횡보장에서는 복리 효과가 불리할 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "XLF",
+      "name": "Financial Select Sector SPDR Fund",
+      "tradingview_symbol": "AMEX-XLF",
+      "why": "FAS의 기본 금융 섹터 방향성을 확인합니다."
+    },
+    {
+      "ticker": "KRE",
+      "name": "SPDR S&P Regional Banking ETF",
+      "tradingview_symbol": "AMEX-KRE",
+      "why": "지역은행 스트레스가 FAS에 크게 번질 수 있습니다."
+    },
+    {
+      "ticker": "JPM",
+      "name": "JPMorgan Chase",
+      "tradingview_symbol": "NYSE-JPM",
+      "why": "대형은행 실적과 신용 사이클의 기준점입니다."
+    },
+    {
+      "ticker": "BAC",
+      "name": "Bank of America",
+      "tradingview_symbol": "NYSE-BAC",
+      "why": "금리 민감도와 대형은행 순이자수익을 확인합니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "금융 섹터 추세",
+      "why": "FAS는 일일 3배 상품이라 방향성이 가장 중요합니다.",
+      "positive": "XLF/KRE가 추세적으로 오르면 레버리지 효과가 살아납니다.",
+      "negative": "횡보와 급락이 반복되면 변동성 드래그가 커집니다."
+    },
+    {
+      "name": "금리곡선과 순이자마진",
+      "why": "은행 이익의 핵심 변수입니다.",
+      "positive": "곡선이 정상화되면 은행 마진 기대가 좋아집니다.",
+      "negative": "역전이 깊어지거나 대출 수요가 약하면 부담입니다."
+    },
+    {
+      "name": "신용손실/예금 유출",
+      "why": "금융주 급락을 만드는 주요 리스크입니다.",
+      "positive": "신용지표가 안정되면 리스크 프리미엄이 낮아집니다.",
+      "negative": "부실과 예금 유출이 커지면 3배 레버리지가 손실을 키울 수 있습니다."
+    }
+  ]
+}

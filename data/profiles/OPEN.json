@@ -1,0 +1,147 @@
+{
+  "ambiguous_ticker": true,
+  "sector": "Real Estate",
+  "subsector": "Residential Real Estate / iBuying",
+  "themes": [
+    "Opendoor",
+    "iBuying",
+    "residential real estate",
+    "mortgage rates",
+    "housing inventory",
+    "home prices",
+    "contribution margin",
+    "cash burn",
+    "debt refinancing"
+  ],
+  "sector_cycle": {
+    "why": "OPEN은 주택 거래량, 모기지 금리, 재고 회전, 주택가격 안정성, 자금조달 여건에 매우 민감한 고위험 부동산 플랫폼입니다.",
+    "positive": [
+      "모기지 금리 하락과 거래량 회복",
+      "재고 회전과 매입-매각 스프레드 개선",
+      "현금소진 축소와 조정 EBITDA 개선"
+    ],
+    "negative": [
+      "모기지 금리 상승",
+      "주택가격 하락과 재고 평가손",
+      "희석/부채 리파이낸싱 리스크"
+    ],
+    "watch": [
+      "mortgage rates",
+      "housing inventory",
+      "home price index",
+      "Opendoor adjusted EBITDA",
+      "inventory writedown"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Opendoor Investor Relations",
+      "domain": "investor.opendoor.com",
+      "tier": 1,
+      "why": "회사 공식 발표/IR"
+    }
+  ],
+  "why_it_matters": "OPEN은 주택 거래 회복에 레버리지된 턴어라운드 종목입니다. 금리가 내려가고 재고 회전이 좋아지면 매출과 마진이 빠르게 개선될 수 있지만, 주택가격 하락이나 현금소진이 이어지면 희석과 재무 리스크가 커집니다.",
+  "watch_queries": [
+    {
+      "query": "Opendoor earnings housing inventory adjusted EBITDA",
+      "why": "재고 회전과 수익성 개선을 확인"
+    },
+    {
+      "query": "Opendoor mortgage rates home sales",
+      "why": "금리와 주택 거래량이 OPEN에 미치는 영향을 확인"
+    },
+    {
+      "query": "Opendoor inventory writedown cash burn",
+      "why": "재고 평가손과 현금소진 리스크를 확인"
+    },
+    {
+      "query": "Opendoor refinancing debt dilution",
+      "why": "자금조달과 희석 가능성을 확인"
+    }
+  ],
+  "positive_triggers": [
+    "mortgage rates decline",
+    "home sales recovery",
+    "inventory turnover",
+    "contribution margin",
+    "positive adjusted EBITDA",
+    "cash burn reduction"
+  ],
+  "negative_triggers": [
+    "mortgage rates rise",
+    "housing downturn",
+    "inventory writedown",
+    "cash burn",
+    "dilution",
+    "debt refinancing risk",
+    "credit facility"
+  ],
+  "chain": [
+    {
+      "from": "모기지 금리",
+      "to": "주택 거래량",
+      "why": "금리가 내려가면 매수자 부담이 줄고 OPEN의 매입/매각 회전 가능성이 커집니다."
+    },
+    {
+      "from": "주택가격과 재고",
+      "to": "기여마진과 평가손",
+      "why": "가격이 안정되고 재고가 빨리 팔리면 스프레드가 개선되지만, 가격 하락은 평가손으로 이어질 수 있습니다."
+    },
+    {
+      "from": "현금소진과 부채",
+      "to": "희석/생존 리스크",
+      "why": "턴어라운드 전에 현금이 부족해지면 주주 희석이나 리파이낸싱 부담이 커질 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "Z",
+      "name": "Zillow",
+      "tradingview_symbol": "NASDAQ-Z",
+      "why": "온라인 부동산 수요와 주택 거래량 민감도를 비교합니다."
+    },
+    {
+      "ticker": "RDFN",
+      "name": "Redfin",
+      "tradingview_symbol": "NASDAQ-RDFN",
+      "why": "부동산 거래 플랫폼의 비용 구조와 수요 회복을 같이 봅니다."
+    },
+    {
+      "ticker": "RKT",
+      "name": "Rocket Companies",
+      "tradingview_symbol": "NYSE-RKT",
+      "why": "모기지 금리와 주택 금융 수요를 확인합니다."
+    },
+    {
+      "ticker": "DHI",
+      "name": "D.R. Horton",
+      "tradingview_symbol": "NYSE-DHI",
+      "why": "주택 수요와 신규 주택 시장의 기준점입니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "모기지 금리와 주택 거래량",
+      "why": "OPEN 매출 회복의 출발점입니다.",
+      "positive": "금리 하락과 거래량 회복이 같이 나오면 턴어라운드 가능성이 커집니다.",
+      "negative": "금리가 높고 거래가 막히면 재고 회전이 느려집니다."
+    },
+    {
+      "name": "재고 회전과 기여마진",
+      "why": "iBuying 모델이 손실 없이 작동하는지 보여줍니다.",
+      "positive": "회전이 빨라지고 마진이 개선되면 사업 모델 신뢰가 회복됩니다.",
+      "negative": "재고 평가손이 반복되면 위험 신호입니다."
+    },
+    {
+      "name": "현금소진/부채 만기",
+      "why": "고위험 턴어라운드에서 생존력이 가장 중요합니다.",
+      "positive": "현금소진이 줄고 리파이낸싱이 안정되면 주주 희석 우려가 줄어듭니다.",
+      "negative": "현금 부족이나 희석성 조달은 다시 고려해야 합니다."
+    }
+  ]
+}

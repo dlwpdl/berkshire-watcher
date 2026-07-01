@@ -122,7 +122,7 @@ async function collectEvents(items, sources) {
 
 function buildQueries(item, sources) {
   const manual = Array.isArray(item.watch_queries) ? item.watch_queries : [];
-  const fallback = [item.ticker, item.name, ...(item.themes || [])]
+  const fallback = [item.ambiguous_ticker ? null : item.ticker, item.name, ...(item.themes || [])]
     .filter(Boolean)
     .map(query => ({ query, why: '기본 감시 쿼리' }));
   const sourceQueries = buildSourceQueries(item, manual, sources);
@@ -356,7 +356,7 @@ async function analyzeItem(item, events, sources) {
 
 function eventMatchesItem(event, item) {
   const text = normalize(eventContentText(event));
-  return tickerInText(item.ticker, text)
+  return (!item.ambiguous_ticker && tickerInText(item.ticker, text))
     || [item.name, ...(item.themes || [])]
     .filter(Boolean)
     .some(value => text.includes(normalize(value)));
@@ -370,7 +370,7 @@ function scoreEvent(item, event, sources) {
   const sectorMatches = [item.sector, item.subsector, ...(item.sector_cycle?.watch || [])]
     .filter(Boolean)
     .filter(value => text.includes(normalize(value)));
-  const directMatch = tickerInText(item.ticker, text)
+  const directMatch = (!item.ambiguous_ticker && tickerInText(item.ticker, text))
     || (item.name ? text.includes(normalize(item.name)) : false);
   const queryMatch = event.query ? 1 : 0;
   const source = event.querySource || findKnownSource(event, item, sources);
@@ -865,6 +865,7 @@ function selfTest() {
   assert.equal(tickerInText('LLY', 'historically benefited from the ecosystem'), false);
   assert.equal(tickerInText('COIN', 'stablecoin pressure'), false);
   assert.equal(tickerInText('COIN', 'Coinbase (COIN) shares moved'), true);
+  assert.equal(eventMatchesItem({ title: 'Markets open higher' }, { ticker: 'OPEN', ambiguous_ticker: true }), false);
 }
 
 main().catch(error => {

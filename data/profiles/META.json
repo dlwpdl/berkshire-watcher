@@ -1,0 +1,157 @@
+{
+  "sector": "Communication Services",
+  "subsector": "Social Media / Digital Advertising / AI",
+  "themes": [
+    "digital advertising",
+    "Instagram",
+    "Reels",
+    "WhatsApp",
+    "Threads",
+    "AI ranking",
+    "AI capex",
+    "Reality Labs",
+    "antitrust"
+  ],
+  "sector_cycle": {
+    "why": "META는 광고 경기, AI 추천/광고 효율, 대규모 AI capex, Reality Labs 손실, 반독점 규제에 같이 흔들립니다.",
+    "positive": [
+      "AI가 광고 효율과 가격을 개선",
+      "Reels/WhatsApp/Threads 수익화 확대",
+      "capex 대비 광고 매출 성과가 확인"
+    ],
+    "negative": [
+      "AI capex가 자유현금흐름을 압박",
+      "Reality Labs 손실 확대",
+      "FTC/EU 규제나 광고 경기 둔화"
+    ],
+    "watch": [
+      "Meta advertising growth",
+      "AI capex",
+      "Reality Labs losses",
+      "WhatsApp monetization",
+      "FTC antitrust"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "ai_infrastructure"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Meta Investor Relations",
+      "domain": "investor.atmeta.com",
+      "tier": 1,
+      "why": "회사 공식 실적/IR"
+    },
+    {
+      "name": "Meta Newsroom",
+      "domain": "about.fb.com",
+      "tier": 1,
+      "why": "제품/정책 공식 발표"
+    }
+  ],
+  "why_it_matters": "META의 핵심은 거대한 소셜 광고 엔진이 AI 투자로 더 강해지는지입니다. 광고 성장, Reels/WhatsApp 수익화, AI 추천 효율이 capex 부담을 이기면 강하지만, Reality Labs와 AI 인프라 지출이 수익성을 갉아먹으면 다시 봐야 합니다.",
+  "watch_queries": [
+    {
+      "query": "Meta earnings advertising growth AI capex",
+      "why": "광고 성장과 AI 투자 부담을 같이 확인"
+    },
+    {
+      "query": "Meta Reels WhatsApp Threads monetization",
+      "why": "신규 수익화 축이 커지는지 확인"
+    },
+    {
+      "query": "Meta Reality Labs losses AI spending",
+      "why": "비핵심 손실과 capex 압박을 확인"
+    },
+    {
+      "query": "Meta FTC EU antitrust advertising regulation",
+      "why": "반독점/개인정보 규제 리스크를 확인"
+    }
+  ],
+  "positive_triggers": [
+    "advertising growth",
+    "AI ad tools",
+    "Reels monetization",
+    "WhatsApp monetization",
+    "margin expansion",
+    "share repurchase"
+  ],
+  "negative_triggers": [
+    "capex pressure",
+    "Reality Labs losses",
+    "ad slowdown",
+    "antitrust",
+    "privacy regulation",
+    "ROI uncertainty"
+  ],
+  "chain": [
+    {
+      "from": "AI 추천/광고 모델",
+      "to": "광고 단가와 전환율",
+      "why": "추천과 타겟팅이 좋아지면 광고주는 같은 예산에서 더 높은 성과를 얻고 지출을 늘릴 수 있습니다."
+    },
+    {
+      "from": "AI capex",
+      "to": "자유현금흐름과 멀티플",
+      "why": "투자가 광고 성장으로 돌아오면 긍정이지만, ROI가 불명확하면 현금흐름 할인 요인이 됩니다."
+    },
+    {
+      "from": "WhatsApp/Threads 수익화",
+      "to": "숨은 매출 옵션",
+      "why": "아직 덜 monetized 된 앱이 매출화되면 기존 Facebook/Instagram 의존도가 낮아질 수 있습니다."
+    },
+    {
+      "from": "규제와 개인정보 정책",
+      "to": "타겟팅 효율과 사업 구조",
+      "why": "데이터 사용 제한이나 반독점 조치가 강해지면 광고 효율과 제품 묶음 전략이 흔들립니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "GOOG",
+      "name": "Alphabet",
+      "tradingview_symbol": "NASDAQ-GOOG",
+      "why": "디지털 광고와 AI 검색/추천 경쟁 축입니다."
+    },
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA",
+      "tradingview_symbol": "NASDAQ-NVDA",
+      "why": "META의 AI 인프라 capex가 GPU 수요와 연결됩니다."
+    },
+    {
+      "ticker": "TTD",
+      "name": "The Trade Desk",
+      "tradingview_symbol": "NASDAQ-TTD",
+      "why": "광고 경기와 광고 기술 멀티플을 비교합니다."
+    },
+    {
+      "ticker": "SNAP",
+      "name": "Snap",
+      "tradingview_symbol": "NYSE-SNAP",
+      "why": "소셜 광고와 젊은 사용자 경쟁 흐름을 확인합니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "광고 매출 성장률",
+      "why": "META 현금창출력의 핵심 지표입니다.",
+      "positive": "광고 성장과 가격 개선이 이어지면 AI 투자 논리가 강해집니다.",
+      "negative": "둔화가 크면 광고 경기, TikTok, 개인정보 정책 영향을 분해해야 합니다."
+    },
+    {
+      "name": "AI capex와 가이던스",
+      "why": "리포트상 가장 큰 변수는 대규모 AI 투자의 회수 가능성입니다.",
+      "positive": "capex가 매출/마진 개선과 같이 나오면 보유 신호입니다.",
+      "negative": "지출만 늘고 ROI 설명이 약하면 다시 고려해야 합니다."
+    },
+    {
+      "name": "Reality Labs 손실",
+      "why": "핵심 광고 사업의 가치를 희석할 수 있는 비용 항목입니다.",
+      "positive": "손실이 줄거나 투자가 통제되면 현금흐름 우려가 줄어듭니다.",
+      "negative": "손실 확대는 자본배분 리스크를 키웁니다."
+    }
+  ]
+}

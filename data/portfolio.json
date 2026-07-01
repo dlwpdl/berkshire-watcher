@@ -64,6 +64,78 @@
       ],
       "template": "glp1_pharma",
       "profile": "LLY"
+    },
+    {
+      "ticker": "TTWO",
+      "name": "Take-Two Interactive",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "게임",
+        "미디어",
+        "성장주"
+      ],
+      "profile": "TTWO"
+    },
+    {
+      "ticker": "S",
+      "name": "SentinelOne",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "사이버보안",
+        "AI",
+        "성장주"
+      ],
+      "profile": "S"
+    },
+    {
+      "ticker": "META",
+      "name": "Meta Platforms",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "AI",
+        "빅테크",
+        "광고",
+        "성장주"
+      ],
+      "profile": "META"
+    },
+    {
+      "ticker": "FAS",
+      "name": "Direxion Daily Financial Bull 3X Shares",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "ETF",
+        "금융",
+        "레버리지"
+      ],
+      "profile": "FAS"
+    },
+    {
+      "ticker": "CURE",
+      "name": "Direxion Daily Healthcare Bull 3X Shares",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "ETF",
+        "헬스케어",
+        "레버리지"
+      ],
+      "profile": "CURE"
+    },
+    {
+      "ticker": "OPEN",
+      "name": "Opendoor Technologies",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "부동산",
+        "고위험성장"
+      ],
+      "profile": "OPEN"
     }
   ]
 }

@@ -1,0 +1,149 @@
+{
+  "sector": "Communication Services",
+  "subsector": "Interactive Entertainment / Video Games",
+  "themes": [
+    "GTA VI",
+    "Rockstar Games",
+    "2K",
+    "Zynga",
+    "mobile gaming",
+    "recurrent consumer spending",
+    "bookings",
+    "game release cycle"
+  ],
+  "sector_cycle": {
+    "why": "TTWO는 대형 게임 출시 일정, 콘솔 사이클, 라이브서비스 지출, 모바일 게임 수요에 민감합니다.",
+    "positive": [
+      "GTA VI 출시 일정과 예약판매가 순조로움",
+      "NBA 2K/GTA Online 같은 반복 지출이 유지",
+      "Zynga 모바일 매출과 마진 개선"
+    ],
+    "negative": [
+      "GTA VI 지연",
+      "개발비와 마케팅비 증가",
+      "콘솔/모바일 게임 지출 둔화"
+    ],
+    "watch": [
+      "GTA VI release date",
+      "Take-Two bookings guidance",
+      "recurrent consumer spending",
+      "Zynga mobile growth"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Take-Two Investor Relations",
+      "domain": "take2games.com",
+      "tier": 1,
+      "why": "회사 공식 발표/IR"
+    },
+    {
+      "name": "Rockstar Games",
+      "domain": "rockstargames.com",
+      "tier": 1,
+      "why": "GTA/Rockstar 공식 제품 발표"
+    }
+  ],
+  "why_it_matters": "TTWO의 핵심은 GTA VI 같은 블록버스터 출시가 예약매출과 반복 결제로 얼마나 오래 이어지느냐입니다. 출시 일정과 가이던스가 지켜지면 강하지만, 지연이나 개발비 상승이 나오면 투자 논리를 다시 봐야 합니다.",
+  "watch_queries": [
+    {
+      "query": "Take-Two GTA VI release date bookings",
+      "why": "GTA VI 출시 일정과 예약매출 영향을 확인"
+    },
+    {
+      "query": "Take-Two earnings bookings guidance recurrent consumer spending",
+      "why": "실적 가이던스와 반복 결제 흐름을 확인"
+    },
+    {
+      "query": "Take-Two Zynga mobile games revenue",
+      "why": "모바일 사업 회복 여부를 확인"
+    },
+    {
+      "query": "Rockstar Games GTA Online monetization Take-Two",
+      "why": "GTA 생태계의 장기 현금창출력을 확인"
+    }
+  ],
+  "positive_triggers": [
+    "GTA VI launch",
+    "release date confirmed",
+    "bookings growth",
+    "recurrent consumer spending",
+    "margin expansion",
+    "mobile growth"
+  ],
+  "negative_triggers": [
+    "GTA delay",
+    "weak guidance",
+    "development costs",
+    "marketing costs",
+    "live services decline",
+    "console slowdown"
+  ],
+  "chain": [
+    {
+      "from": "GTA VI 출시 일정",
+      "to": "예약매출과 멀티플",
+      "why": "출시가 확정되고 반응이 좋으면 다음 실적 사이클의 가시성이 커집니다."
+    },
+    {
+      "from": "라이브서비스 참여도",
+      "to": "반복 결제와 마진",
+      "why": "기존 타이틀의 반복 지출이 유지되면 출시 공백기에도 현금흐름이 방어됩니다."
+    },
+    {
+      "from": "Zynga 모바일 성과",
+      "to": "성장 축 다변화",
+      "why": "모바일이 살아나면 콘솔 대작 의존도가 줄고 실적 변동성이 낮아질 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "EA",
+      "name": "Electronic Arts",
+      "tradingview_symbol": "NASDAQ-EA",
+      "why": "대형 게임 퍼블리셔의 예약매출과 스포츠 게임 지출을 비교합니다."
+    },
+    {
+      "ticker": "RBLX",
+      "name": "Roblox",
+      "tradingview_symbol": "NYSE-RBLX",
+      "why": "게임 내 결제와 사용자 참여 흐름을 같이 봅니다."
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft",
+      "tradingview_symbol": "NASDAQ-MSFT",
+      "why": "Xbox/Game Pass와 게임 플랫폼 경쟁 축입니다."
+    },
+    {
+      "ticker": "SONY",
+      "name": "Sony",
+      "tradingview_symbol": "NYSE-SONY",
+      "why": "PlayStation 콘솔 사이클과 대작 출시 수요를 확인합니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "순예약매출 가이던스",
+      "why": "게임 출시 기대가 실제 실적으로 이어지는지 보는 핵심 지표입니다.",
+      "positive": "가이던스가 상향되면 대작 사이클 기대가 강화됩니다.",
+      "negative": "하향되면 출시 지연이나 수요 둔화를 의심해야 합니다."
+    },
+    {
+      "name": "GTA VI 일정과 초기 반응",
+      "why": "TTWO 투자 논리의 가장 큰 단일 변수입니다.",
+      "positive": "출시일 유지와 예약판매 호조는 강한 신호입니다.",
+      "negative": "지연이나 부정적 반응은 멀티플을 흔들 수 있습니다."
+    },
+    {
+      "name": "반복 소비 지출",
+      "why": "일회성 패키지 판매보다 질 좋은 매출입니다.",
+      "positive": "반복 지출이 늘면 수익 안정성이 좋아집니다.",
+      "negative": "둔화되면 기존 타이틀의 수명과 유저 참여를 다시 봐야 합니다."
+    }
+  ]
+}
