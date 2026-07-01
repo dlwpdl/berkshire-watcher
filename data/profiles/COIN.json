@@ -1,0 +1,162 @@
+{
+  "template": "crypto_fintech",
+  "sector": "Financial Services",
+  "subsector": "Capital Markets / Crypto Exchange / Custody",
+  "themes": [
+    "crypto trading",
+    "Bitcoin",
+    "Ethereum",
+    "USDC",
+    "custody",
+    "staking",
+    "regulation"
+  ],
+  "sector_cycle": {
+    "why": "COIN은 크립토 가격, 거래량, 규제, 스테이블코인 수익, 기관 수탁 수요에 동시에 민감합니다.",
+    "positive": [
+      "크립토 가격과 거래량 회복",
+      "규제 명확성 개선",
+      "USDC/기관 수탁 수익 확대"
+    ],
+    "negative": [
+      "거래량 둔화",
+      "SEC/CFTC 규제 강화",
+      "스테이블코인 수익성 압박"
+    ],
+    "watch": [
+      "crypto trading volume",
+      "Bitcoin ETF flows",
+      "USDC market cap",
+      "SEC crypto regulation"
+    ]
+  },
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "crypto_fintech"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Coinbase Investor Relations",
+      "domain": "investor.coinbase.com",
+      "tier": 1,
+      "why": "회사 공식 발표/IR"
+    },
+    {
+      "name": "Coinbase Blog",
+      "domain": "coinbase.com",
+      "tier": 1,
+      "why": "제품/정책 공식 발표"
+    }
+  ],
+  "why_it_matters": "COIN은 크립토 사이클의 거래소 레버리지입니다. 가격과 거래량이 살아나면 거래수익이 빠르게 좋아지고, 규제 명확성이나 기관 수탁 수요가 커지면 멀티플 방어력이 생깁니다. 반대로 거래량이 식거나 규제가 강해지면 실적과 투자 논리가 같이 약해질 수 있습니다.",
+  "watch_queries": [
+    {
+      "query": "Coinbase Open USD stablecoin",
+      "why": "Open USD와 USDC/스테이블코인 수익 구조 변화를 확인"
+    },
+    {
+      "query": "Coinbase crypto trading volume revenue",
+      "why": "크립토 거래량이 COIN 실적으로 이어지는지 확인"
+    },
+    {
+      "query": "Coinbase SEC CFTC crypto regulation",
+      "why": "거래소 사업과 상장 자산 규제 리스크를 확인"
+    },
+    {
+      "query": "Coinbase USDC stablecoin revenue",
+      "why": "USDC와 금리/스테이블코인 수익 흐름을 확인"
+    },
+    {
+      "query": "Coinbase custody Bitcoin ETF institutional",
+      "why": "기관 수탁과 ETF 관련 수요가 커지는지 확인"
+    }
+  ],
+  "positive_triggers": [
+    "trading volume",
+    "crypto prices",
+    "regulatory clarity",
+    "USDC revenue",
+    "custody revenue",
+    "institutional adoption",
+    "Bitcoin ETF flows"
+  ],
+  "negative_triggers": [
+    "SEC enforcement",
+    "CFTC enforcement",
+    "crypto crackdown",
+    "trading volume decline",
+    "fee compression",
+    "USDC pressure",
+    "stablecoin regulation",
+    "outage"
+  ],
+  "chain": [
+    {
+      "from": "크립토 가격과 위험선호",
+      "to": "거래량과 거래수익",
+      "why": "Bitcoin/Ethereum 가격이 강하고 개인·기관 참여가 늘면 COIN의 거래 기반 매출이 빠르게 좋아질 수 있습니다."
+    },
+    {
+      "from": "USDC와 금리",
+      "to": "스테이블코인 수익",
+      "why": "USDC 잔고와 단기금리 수준은 COIN의 이자성 수익과 직접 연결됩니다."
+    },
+    {
+      "from": "규제 명확성",
+      "to": "상장 자산과 신규 상품",
+      "why": "SEC/CFTC 규제가 완화되거나 명확해지면 거래 가능 자산과 기관 고객 확대 여지가 커집니다."
+    },
+    {
+      "from": "ETF/기관 수탁 수요",
+      "to": "반복 수익과 플랫폼 신뢰도",
+      "why": "ETF와 기관 고객이 늘면 단기 거래수익 외의 수탁·서비스 수익 기반이 강해질 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "HOOD",
+      "name": "Robinhood",
+      "tradingview_symbol": "NASDAQ-HOOD",
+      "why": "개인투자자 크립토 거래량 민감도를 같이 봅니다."
+    },
+    {
+      "ticker": "MSTR",
+      "name": "MicroStrategy",
+      "tradingview_symbol": "NASDAQ-MSTR",
+      "why": "Bitcoin 가격과 크립토 위험선호에 민감한 비교 종목입니다."
+    },
+    {
+      "ticker": "CME",
+      "name": "CME Group",
+      "tradingview_symbol": "NASDAQ-CME",
+      "why": "기관 파생상품 거래량과 시장 변동성 축을 확인합니다."
+    },
+    {
+      "ticker": "IBIT",
+      "name": "iShares Bitcoin Trust",
+      "tradingview_symbol": "NASDAQ-IBIT",
+      "why": "Bitcoin ETF 자금 흐름과 기관 수요를 직접 보여줍니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "거래량과 거래수익",
+      "why": "COIN 실적의 가장 민감한 핵심 지표입니다.",
+      "positive": "거래량과 수수료 수익이 같이 늘면 크립토 사이클 레버리지가 살아납니다.",
+      "negative": "가격은 올라도 거래량이 약하면 실적 민감도가 낮아질 수 있습니다."
+    },
+    {
+      "name": "USDC 잔고와 금리",
+      "why": "스테이블코인 관련 수익과 이자성 수익을 결정합니다.",
+      "positive": "USDC 잔고가 늘고 금리가 버티면 반복 수익이 좋아집니다.",
+      "negative": "USDC 점유율 하락이나 금리 하락은 수익성에 부담입니다."
+    },
+    {
+      "name": "규제/소송 진행",
+      "why": "상장 자산, 스테이킹, 기관 상품 확장성을 좌우합니다.",
+      "positive": "규제 명확성이 높아지면 멀티플 부담이 줄어듭니다.",
+      "negative": "제재, 상품 제한, 소송 악화는 다시 고려 신호입니다."
+    }
+  ]
+}

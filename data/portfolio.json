@@ -27,6 +27,19 @@
       "profile": "HOOD"
     },
     {
+      "ticker": "COIN",
+      "name": "Coinbase",
+      "status": "watching",
+      "portfolios": [
+        "전체",
+        "크립토",
+        "핀테크",
+        "고위험성장"
+      ],
+      "template": "crypto_fintech",
+      "profile": "COIN"
+    },
+    {
       "ticker": "NVDA",
       "name": "NVIDIA",
       "status": "holding",

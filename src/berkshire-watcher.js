@@ -356,7 +356,8 @@ async function analyzeItem(item, events, sources) {
 
 function eventMatchesItem(event, item) {
   const text = normalize(eventContentText(event));
-  return [item.ticker, item.name, ...(item.themes || [])]
+  return tickerInText(item.ticker, text)
+    || [item.name, ...(item.themes || [])]
     .filter(Boolean)
     .some(value => text.includes(normalize(value)));
 }
@@ -369,7 +370,8 @@ function scoreEvent(item, event, sources) {
   const sectorMatches = [item.sector, item.subsector, ...(item.sector_cycle?.watch || [])]
     .filter(Boolean)
     .filter(value => text.includes(normalize(value)));
-  const directMatch = [item.ticker, item.name].filter(Boolean).some(value => text.includes(normalize(value)));
+  const directMatch = tickerInText(item.ticker, text)
+    || (item.name ? text.includes(normalize(item.name)) : false);
   const queryMatch = event.query ? 1 : 0;
   const source = event.querySource || findKnownSource(event, item, sources);
   const quality = contentQuality(event);
@@ -643,6 +645,13 @@ function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function tickerInText(ticker, text) {
+  const value = normalize(ticker);
+  const haystack = normalize(text);
+  if (!value) return false;
+  return new RegExp(`(^|[^a-z0-9])${escapeRegExp(value)}([^a-z0-9]|$)`).test(haystack);
+}
+
 function formatSectorCycle(item) {
   if (!item.sector && !item.sector_cycle) return '- 아직 등록된 섹터 순환 설명이 없습니다.';
 
@@ -853,6 +862,9 @@ function selfTest() {
     ], Date.parse('2026-07-02T00:00:00.000Z')).map(event => event.title),
     ['new'],
   );
+  assert.equal(tickerInText('LLY', 'historically benefited from the ecosystem'), false);
+  assert.equal(tickerInText('COIN', 'stablecoin pressure'), false);
+  assert.equal(tickerInText('COIN', 'Coinbase (COIN) shares moved'), true);
 }
 
 main().catch(error => {
