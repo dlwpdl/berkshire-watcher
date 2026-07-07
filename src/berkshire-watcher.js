@@ -144,8 +144,19 @@ function buildSourceQueries(item, manualQueries, sources) {
 
 function sourcesForItem(item, sources) {
   const groups = item.source_groups || sources.default_groups || [];
-  const grouped = groups.flatMap(group => sources.groups?.[group] || []);
+  const grouped = interleave(groups.map(group => sources.groups?.[group] || []));
   return uniqueBy([...(item.trusted_sources || []), ...grouped], source => `${source.domain || source.name}`.toLowerCase());
+}
+
+function interleave(lists) {
+  const result = [];
+  const max = Math.max(0, ...lists.map(list => list.length));
+  for (let i = 0; i < max; i += 1) {
+    for (const list of lists) {
+      if (list[i]) result.push(list[i]);
+    }
+  }
+  return result;
 }
 
 async function fetchGoogleNews(query) {
@@ -872,6 +883,10 @@ function selfTest() {
     ['new'],
   );
   assert.equal(isLikelyNonNewsEvent({ title: 'Open USD Price, OUSD Price, Live Charts, and Marketcap - Coinbase', source: 'Coinbase' }), true);
+  assert.deepEqual(sourcesForItem(
+    { trusted_sources: [{ name: 'Trusted', domain: 'trusted.com' }], source_groups: ['a', 'b'] },
+    { groups: { a: [{ name: 'A1', domain: 'a1.com' }, { name: 'A2', domain: 'a2.com' }], b: [{ name: 'B1', domain: 'b1.com' }] } },
+  ).map(source => source.name), ['Trusted', 'A1', 'B1', 'A2']);
   assert.equal(tickerInText('LLY', 'historically benefited from the ecosystem'), false);
   assert.equal(tickerInText('COIN', 'stablecoin pressure'), false);
   assert.equal(tickerInText('COIN', 'Coinbase (COIN) shares moved'), true);

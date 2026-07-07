@@ -1,0 +1,30 @@
+{
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "consumer_staples",
+    "digital_ads"
+  ],
+  "trusted_sources": [
+    {
+      "name": "The Coca-Cola Company",
+      "domain": "coca-colacompany.com",
+      "tier": 1,
+      "why": "회사 공식 발표/IR"
+    }
+  ],
+  "watch_queries": [
+    {
+      "query": "Coca-Cola earnings organic revenue unit case volume",
+      "why": "가격과 물량이 같이 유지되는지 확인"
+    },
+    {
+      "query": "Coca-Cola pricing volume margins consumer staples",
+      "why": "가격 인상, 물량, 마진의 균형을 확인"
+    },
+    {
+      "query": "Coca-Cola marketing spend beverage demand",
+      "why": "브랜드 투자와 음료 수요 흐름을 확인"
+    }
+  ]
+}

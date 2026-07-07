@@ -302,6 +302,168 @@
         "tier": 1,
         "why": "에너지/EV 수요 공식급 데이터"
       }
+    ],
+    "digital_ads": [
+      {
+        "name": "Adweek",
+        "domain": "adweek.com",
+        "tier": 2,
+        "why": "광고주/플랫폼 예산 흐름 확인"
+      },
+      {
+        "name": "Digiday",
+        "domain": "digiday.com",
+        "tier": 2,
+        "why": "디지털 광고와 미디어 바이어 심리 확인"
+      },
+      {
+        "name": "Marketing Dive",
+        "domain": "marketingdive.com",
+        "tier": 2,
+        "why": "광고/브랜드 예산과 플랫폼 변화 확인"
+      },
+      {
+        "name": "Search Engine Land",
+        "domain": "searchengineland.com",
+        "tier": 2,
+        "why": "검색 광고와 검색 UX 변화 확인"
+      }
+    ],
+    "cybersecurity": [
+      {
+        "name": "The Hacker News",
+        "domain": "thehackernews.com",
+        "tier": 2,
+        "why": "보안 사고와 위협 트렌드 확인"
+      },
+      {
+        "name": "BleepingComputer",
+        "domain": "bleepingcomputer.com",
+        "tier": 2,
+        "why": "취약점/침해 사고와 보안 제품 반응 확인"
+      },
+      {
+        "name": "Dark Reading",
+        "domain": "darkreading.com",
+        "tier": 2,
+        "why": "엔터프라이즈 보안 수요와 위협 분석"
+      },
+      {
+        "name": "Cybersecurity Dive",
+        "domain": "cybersecuritydive.com",
+        "tier": 2,
+        "why": "보안 예산/정책/기업 도입 흐름 확인"
+      }
+    ],
+    "gaming": [
+      {
+        "name": "GamesIndustry.biz",
+        "domain": "gamesindustry.biz",
+        "tier": 2,
+        "why": "게임 산업 매출/출시/인력 흐름 확인"
+      },
+      {
+        "name": "Game Developer",
+        "domain": "gamedeveloper.com",
+        "tier": 2,
+        "why": "개발비와 출시 일정 리스크 확인"
+      },
+      {
+        "name": "IGN",
+        "domain": "ign.com",
+        "tier": 2,
+        "why": "대형 게임 출시와 유저 반응 확인"
+      },
+      {
+        "name": "VGC",
+        "domain": "videogameschronicle.com",
+        "tier": 2,
+        "why": "콘솔/게임 출시 루머와 공식화 흐름 확인"
+      }
+    ],
+    "real_estate": [
+      {
+        "name": "Nareit",
+        "domain": "reit.com",
+        "tier": 2,
+        "why": "REIT 섹터와 배당/부동산 자금 흐름 확인"
+      },
+      {
+        "name": "GlobeSt",
+        "domain": "globest.com",
+        "tier": 2,
+        "why": "상업용 부동산 거래/임대 흐름 확인"
+      },
+      {
+        "name": "Bisnow",
+        "domain": "bisnow.com",
+        "tier": 2,
+        "why": "상업용 부동산 시장 현장 뉴스"
+      },
+      {
+        "name": "HousingWire",
+        "domain": "housingwire.com",
+        "tier": 2,
+        "why": "주택거래/모기지/중개 플랫폼 흐름 확인"
+      },
+      {
+        "name": "National Association of Realtors",
+        "domain": "nar.realtor",
+        "tier": 1,
+        "why": "미국 주택거래 공식급 데이터"
+      }
+    ],
+    "consumer_staples": [
+      {
+        "name": "Food Dive",
+        "domain": "fooddive.com",
+        "tier": 2,
+        "why": "식음료 기업 가격/수요/원가 흐름 확인"
+      },
+      {
+        "name": "BeverageDaily",
+        "domain": "beveragedaily.com",
+        "tier": 2,
+        "why": "음료 산업과 브랜드/유통 흐름 확인"
+      },
+      {
+        "name": "Consumer Goods Technology",
+        "domain": "consumergoods.com",
+        "tier": 2,
+        "why": "소비재 기업 운영/유통/수요 변화 확인"
+      },
+      {
+        "name": "Grocery Dive",
+        "domain": "grocerydive.com",
+        "tier": 2,
+        "why": "소매 채널과 식품/음료 유통 흐름 확인"
+      }
+    ],
+    "financials": [
+      {
+        "name": "Federal Deposit Insurance Corporation",
+        "domain": "fdic.gov",
+        "tier": 1,
+        "why": "은행 건전성/예금/규제 공식 출처"
+      },
+      {
+        "name": "Office of the Comptroller of the Currency",
+        "domain": "occ.treas.gov",
+        "tier": 1,
+        "why": "은행 감독/규제 공식 출처"
+      },
+      {
+        "name": "American Banker",
+        "domain": "americanbanker.com",
+        "tier": 2,
+        "why": "은행권 신용/예금/규제 전문 뉴스"
+      },
+      {
+        "name": "Banking Dive",
+        "domain": "bankingdive.com",
+        "tier": 2,
+        "why": "은행 실적/규제/업계 흐름 확인"
+      }
     ]
   }
 }

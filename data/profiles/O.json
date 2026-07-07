@@ -1,0 +1,29 @@
+{
+  "source_groups": [
+    "official_filings",
+    "market_news",
+    "real_estate"
+  ],
+  "trusted_sources": [
+    {
+      "name": "Realty Income Investor Relations",
+      "domain": "realtyincome.com",
+      "tier": 1,
+      "why": "회사 공식 실적/IR"
+    }
+  ],
+  "watch_queries": [
+    {
+      "query": "Realty Income earnings AFFO dividend guidance",
+      "why": "리츠 핵심 지표인 AFFO와 배당 안정성을 확인"
+    },
+    {
+      "query": "Realty Income acquisitions cap rate net lease",
+      "why": "순임대 리츠의 인수 수익률과 외형 성장성을 확인"
+    },
+    {
+      "query": "net lease REIT interest rates Realty Income",
+      "why": "금리 변화가 리츠 밸류에이션과 조달비용에 미치는 영향을 확인"
+    }
+  ]
+}
