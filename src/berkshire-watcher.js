@@ -122,7 +122,7 @@ async function collectEvents(items, sources) {
 
 function buildQueries(item, sources) {
   const manual = Array.isArray(item.watch_queries) ? item.watch_queries : [];
-  const fallback = [item.ambiguous_ticker ? null : item.ticker, item.name, ...(item.themes || [])]
+  const fallback = [isAmbiguousTicker(item) ? null : item.ticker, item.name, ...(item.themes || [])]
     .filter(Boolean)
     .map(query => ({ query, why: '기본 감시 쿼리' }));
   const sourceQueries = buildSourceQueries(item, manual, sources);
@@ -295,14 +295,16 @@ function parseRss(xml) {
 
   while ((match = itemPattern.exec(xml))) {
     const block = match[1];
-    items.push({
+    const event = {
       title: decodeXml(extractXml(block, 'title')),
       summary: stripHtml(decodeXml(extractXml(block, 'description'))),
       source: decodeXml(extractXml(block, 'source')) || 'Google News',
       sourceDomain: domainFromUrl(decodeXml(extractXmlAttr(block, 'source', 'url'))),
       url: decodeXml(extractXml(block, 'link')),
       publishedAt: toIsoDate(decodeXml(extractXml(block, 'pubDate'))),
-    });
+    };
+
+    if (!isLikelyNonNewsEvent(event)) items.push(event);
   }
 
   return items;
@@ -327,7 +329,6 @@ async function analyzeItem(item, events, sources) {
   const scored = events
     .filter(event => event.portfolioTicker === item.ticker || eventMatchesItem(event, item))
     .map(event => scoreEvent(item, event, sources))
-    .filter(result => result.score >= minScore)
     .sort((a, b) => b.score - a.score);
 
   if (scored.length === 0) return null;
@@ -356,7 +357,7 @@ async function analyzeItem(item, events, sources) {
 
 function eventMatchesItem(event, item) {
   const text = normalize(eventContentText(event));
-  return (!item.ambiguous_ticker && tickerInText(item.ticker, text))
+  return (!isAmbiguousTicker(item) && tickerInText(item.ticker, text))
     || [item.name, ...(item.themes || [])]
     .filter(Boolean)
     .some(value => text.includes(normalize(value)));
@@ -370,14 +371,14 @@ function scoreEvent(item, event, sources) {
   const sectorMatches = [item.sector, item.subsector, ...(item.sector_cycle?.watch || [])]
     .filter(Boolean)
     .filter(value => text.includes(normalize(value)));
-  const directMatch = (!item.ambiguous_ticker && tickerInText(item.ticker, text))
+  const directMatch = (!isAmbiguousTicker(item) && tickerInText(item.ticker, text))
     || (item.name ? text.includes(normalize(item.name)) : false);
   const queryMatch = event.query ? 1 : 0;
   const source = event.querySource || findKnownSource(event, item, sources);
   const quality = contentQuality(event);
 
   let score = 1 + queryMatch;
-  if (directMatch) score += 3;
+  if (directMatch) score += 4;
   score += Math.min(themeMatches.length, 2) * 2;
   score += Math.min(sectorMatches.length, 1) * 2;
   score += Math.min(positiveMatches.length + negativeMatches.length, 2) * 3;
@@ -419,7 +420,15 @@ function contentQuality(event) {
 }
 
 function articleBodyRequired() {
-  return process.env.REQUIRE_ARTICLE_BODY !== '0';
+  return process.env.REQUIRE_ARTICLE_BODY === '1';
+}
+
+function isLikelyNonNewsEvent(event) {
+  return /\bprice,\s+[^-]+,\s+live charts?,\s+and marketcap\b/i.test(cleanNewsText(event.title, event.source));
+}
+
+function isAmbiguousTicker(item) {
+  return item.ambiguous_ticker || String(item.ticker || '').trim().length <= 2;
 }
 
 function findKnownSource(event, item, sources) {
@@ -862,9 +871,14 @@ function selfTest() {
     ], Date.parse('2026-07-02T00:00:00.000Z')).map(event => event.title),
     ['new'],
   );
+  assert.equal(isLikelyNonNewsEvent({ title: 'Open USD Price, OUSD Price, Live Charts, and Marketcap - Coinbase', source: 'Coinbase' }), true);
   assert.equal(tickerInText('LLY', 'historically benefited from the ecosystem'), false);
   assert.equal(tickerInText('COIN', 'stablecoin pressure'), false);
   assert.equal(tickerInText('COIN', 'Coinbase (COIN) shares moved'), true);
+  assert.equal(isAmbiguousTicker({ ticker: 'O' }), true);
+  assert.equal(isAmbiguousTicker({ ticker: 'KO' }), true);
+  assert.equal(eventMatchesItem({ title: 'Ko Du-shim recalls an actor' }, { ticker: 'KO', name: 'Coca-Cola' }), false);
+  assert.equal(eventMatchesItem({ title: 'Coca-Cola raises guidance' }, { ticker: 'KO', name: 'Coca-Cola' }), true);
   assert.equal(eventMatchesItem({ title: 'Markets open higher' }, { ticker: 'OPEN', ambiguous_ticker: true }), false);
 }
 

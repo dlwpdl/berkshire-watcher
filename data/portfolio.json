@@ -136,6 +136,30 @@
         "고위험성장"
       ],
       "profile": "OPEN"
+    },
+    {
+      "ticker": "O",
+      "name": "Realty Income",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "리츠",
+        "배당",
+        "방어주"
+      ],
+      "profile": "O"
+    },
+    {
+      "ticker": "KO",
+      "name": "Coca-Cola",
+      "status": "holding",
+      "portfolios": [
+        "전체",
+        "소비재",
+        "배당",
+        "방어주"
+      ],
+      "profile": "KO"
     }
   ]
 }
