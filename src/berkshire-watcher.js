@@ -7,6 +7,65 @@ const DEFAULT_PROFILES_DIR = 'data/profiles';
 const DEFAULT_TEMPLATES_DIR = 'data/templates';
 const MAX_MESSAGE_LENGTH = 3900;
 const USER_AGENT = 'Mozilla/5.0 berkshire-watcher/0.1';
+const GENERAL_POSITIVE_TRIGGERS = [
+  'wins lawsuit',
+  'wins',
+  'lawsuit dismissed',
+  'dismisses lawsuit',
+  'beats estimates',
+  'raises guidance',
+  'approved',
+  'approval',
+  'allow',
+  'allowed to buy',
+  'launches',
+  'expands',
+  'record revenue',
+  'surges',
+  'jumps',
+  'rally',
+  'upgrade',
+  'benefit',
+  '승소',
+  '승인',
+  '허용',
+  '상향',
+  '급등',
+  '호조',
+];
+const GENERAL_NEGATIVE_TRIGGERS = [
+  'faces lawsuit',
+  'lawsuit alleges',
+  'class action',
+  'investigation',
+  'probe',
+  'antitrust',
+  'restricted',
+  'restrictions',
+  'limited',
+  'ban on',
+  'banned',
+  'delays',
+  'delay',
+  'cuts guidance',
+  'misses estimates',
+  'fall',
+  'falls',
+  'drops',
+  'decline',
+  'downgrade',
+  'recall',
+  '피소',
+  '제소',
+  '소송 제기',
+  '조사',
+  '제한',
+  '금지',
+  '하락',
+  '둔화',
+  '연기',
+  '삭감',
+];
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
@@ -161,9 +220,16 @@ function interleave(lists) {
 
 async function fetchGoogleNews(query) {
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`;
-  const response = await fetch(url, {
-    headers: { 'User-Agent': USER_AGENT },
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: { 'User-Agent': USER_AGENT },
+      signal: AbortSignal.timeout(Number(process.env.NEWS_TIMEOUT_MS || 10000)),
+    });
+  } catch (error) {
+    console.warn(`Google News fetch failed for "${query}": ${error.message}`);
+    return [];
+  }
 
   if (!response.ok) {
     console.warn(`Google News fetch failed for "${query}": ${response.status}`);
@@ -338,6 +404,7 @@ function isRecentEvent(event, now = Date.now()) {
 async function analyzeItem(item, events, sources) {
   const minScore = Number(process.env.MIN_T_SCORE || 5);
   const scored = events
+    .filter(event => !isLikelyNonNewsEvent(event))
     .filter(event => event.portfolioTicker === item.ticker || eventMatchesItem(event, item))
     .map(event => scoreEvent(item, event, sources))
     .sort((a, b) => b.score - a.score);
@@ -376,8 +443,14 @@ function eventMatchesItem(event, item) {
 
 function scoreEvent(item, event, sources) {
   const text = normalize(eventContentText(event));
-  const positiveMatches = matchList(item.positive_triggers || [], text);
-  const negativeMatches = matchList(item.negative_triggers || [], text);
+  const positiveMatches = uniqueBy([
+    ...matchList(item.positive_triggers || [], text),
+    ...matchPhrases(GENERAL_POSITIVE_TRIGGERS, text),
+  ], value => value);
+  const negativeMatches = uniqueBy([
+    ...matchList(item.negative_triggers || [], text),
+    ...matchPhrases(GENERAL_NEGATIVE_TRIGGERS, text),
+  ], value => value);
   const themeMatches = (item.themes || []).filter(theme => text.includes(normalize(theme)));
   const sectorMatches = [item.sector, item.subsector, ...(item.sector_cycle?.watch || [])]
     .filter(Boolean)
@@ -396,8 +469,9 @@ function scoreEvent(item, event, sources) {
   score += source?.tier === 1 ? 2 : source?.tier === 2 ? 1 : 0;
 
   const direction = classifyDirection(positiveMatches.length, negativeMatches.length);
+  const signalCount = positiveMatches.length + negativeMatches.length;
   const cappedScore = quality === 'title_only'
-    ? Math.min(score, source ? 6 : 5)
+    ? Math.min(score, titleOnlyMaxScore(source, signalCount))
     : score;
 
   return {
@@ -413,6 +487,11 @@ function scoreEvent(item, event, sources) {
       content: quality,
     },
   };
+}
+
+function titleOnlyMaxScore(source, signalCount) {
+  if (!source) return signalCount ? 6 : 5;
+  return signalCount ? 8 : 6;
 }
 
 function eventContentText(event) {
@@ -435,7 +514,16 @@ function articleBodyRequired() {
 }
 
 function isLikelyNonNewsEvent(event) {
-  return /\bprice,\s+[^-]+,\s+live charts?,\s+and marketcap\b/i.test(cleanNewsText(event.title, event.source));
+  const title = cleanNewsText(event.title, event.source);
+  const summary = cleanNewsText(event.summary, event.source);
+  const text = normalize([title, summary].filter(Boolean).join(' '));
+  return /\bprice,\s+[^-]+,\s+live charts?,\s+and marketcap\b/i.test(title)
+    || isLikelyPromotionalCampaign(text);
+}
+
+function isLikelyPromotionalCampaign(text) {
+  return /(coinbase cup|chance to win|win up to|get a chance to win|giveaway|sweepstakes|trading contest|trading competition|promo(?:tion)?|campaign|코인베이스 컵|획득의 기회|최대 .{0,20}받|이벤트|경품|프로모션)/.test(text)
+    && /(trade|trading|perpetual|futures|usdc|\$|prize|bonus|reward|거래|무기한|선물|달러|상금|경품|획득|받자)/.test(text);
 }
 
 function isAmbiguousTicker(item) {
@@ -462,6 +550,17 @@ function matchList(values, text) {
     .filter(value => text.includes(normalize(value)));
 }
 
+function matchPhrases(values, text) {
+  return values
+    .filter(Boolean)
+    .filter(value => phraseInText(value, text));
+}
+
+function phraseInText(phrase, text) {
+  const value = normalize(phrase);
+  return new RegExp(`(^|[^a-z0-9])${escapeRegExp(value)}([^a-z0-9]|$)`).test(text);
+}
+
 function classifyDirection(positiveCount, negativeCount) {
   if (positiveCount > 0 && negativeCount > 0) return 'mixed';
   if (positiveCount > 0) return 'positive';
@@ -470,6 +569,9 @@ function classifyDirection(positiveCount, negativeCount) {
 }
 
 function actionFor(item, score, direction, matches = {}) {
+  if (matches.content === 'title_only' && direction === 'positive') return '호재 원문 확인';
+  if (matches.content === 'title_only' && direction === 'negative') return '악재 원문 확인';
+  if (matches.content === 'title_only' && direction === 'mixed') return '혼재 원문 확인';
   if (matches.content === 'title_only') return '원문 확인';
   if (direction === 'negative' && score >= 9) return '위험 신호';
   if (direction === 'negative' && score >= 7) return '다시 고려';
@@ -883,6 +985,49 @@ function selfTest() {
     ['new'],
   );
   assert.equal(isLikelyNonNewsEvent({ title: 'Open USD Price, OUSD Price, Live Charts, and Marketcap - Coinbase', source: 'Coinbase' }), true);
+  assert.equal(isLikelyNonNewsEvent({
+    title: 'Coinbase Cup India — Trade Perpetual Futures and get a chance to win up to $350K USDC - Coinbase',
+    summary: 'Users can trade perpetual futures for a chance to win rewards.',
+    source: 'Coinbase',
+  }), true);
+  assert.equal(isLikelyNonNewsEvent({
+    title: '코인베이스 컵 인디아 — 무기한 선물 거래하고 최대 35만 달러 USDC 받자',
+    summary: '코인베이스 컵 인디아 — 무기한 선물 거래하고 최대 $350K USDC 획득의 기회',
+    source: 'Coinbase',
+  }), true);
+  assert.equal(isLikelyNonNewsEvent({
+    title: 'Coinbase launches regulated perpetual futures for US customers - Coinbase',
+    summary: 'The new product expands derivatives access for eligible US customers.',
+    source: 'Coinbase',
+  }), false);
+  const testSources = { groups: { market_news: [{ name: 'Reuters', domain: 'reuters.com', tier: 1 }] } };
+  const googleWin = scoreEvent(
+    { ticker: 'GOOG', name: 'Google', themes: ['Gemini'], source_groups: ['market_news'] },
+    { title: 'Google wins consumer lawsuit over Gemini data tracking', summary: 'Google wins consumer lawsuit over Gemini data tracking', source: 'Reuters', sourceDomain: 'reuters.com', query: 'Google Gemini' },
+    testSources,
+  );
+  assert.equal(googleWin.direction, 'positive');
+  assert.equal(googleWin.score, 8);
+  assert.equal(actionFor({ status: 'holding' }, googleWin.score, googleWin.direction, googleWin.matches), '호재 원문 확인');
+  const nvidiaLimited = scoreEvent(
+    { ticker: 'NVDA', name: 'Nvidia', source_groups: ['market_news'] },
+    { title: 'China plans to allow top AI firms to buy limited quantities of Nvidia H200 chips', summary: 'China plans to allow top AI firms to buy limited quantities of Nvidia H200 chips', source: 'Reuters', sourceDomain: 'reuters.com', query: 'Nvidia China' },
+    testSources,
+  );
+  assert.equal(nvidiaLimited.direction, 'mixed');
+  assert.equal(actionFor({ status: 'holding' }, nvidiaLimited.score, nvidiaLimited.direction, nvidiaLimited.matches), '혼재 원문 확인');
+  const nvidiaRestricted = scoreEvent(
+    { ticker: 'NVDA', name: 'Nvidia', source_groups: ['market_news'] },
+    { title: 'Nvidia shares fall after China restrictions hit chip sales', summary: 'Nvidia shares fall after China restrictions hit chip sales', source: 'Reuters', sourceDomain: 'reuters.com', query: 'Nvidia China' },
+    testSources,
+  );
+  assert.equal(nvidiaRestricted.direction, 'negative');
+  assert.equal(actionFor({ status: 'holding' }, nvidiaRestricted.score, nvidiaRestricted.direction, nvidiaRestricted.matches), '악재 원문 확인');
+  assert.equal(scoreEvent(
+    { ticker: 'FAS', name: 'Direxion Daily Financial Bull 3X Shares' },
+    { title: 'Awa Bank highlights regional strength as investors track Japan financials', summary: 'Awa Bank highlights regional strength as investors track Japan financials', source: 'Ad-hoc-news.de', query: 'banks financials' },
+    testSources,
+  ).direction, 'unknown');
   assert.deepEqual(sourcesForItem(
     { trusted_sources: [{ name: 'Trusted', domain: 'trusted.com' }], source_groups: ['a', 'b'] },
     { groups: { a: [{ name: 'A1', domain: 'a1.com' }, { name: 'A2', domain: 'a2.com' }], b: [{ name: 'B1', domain: 'b1.com' }] } },
