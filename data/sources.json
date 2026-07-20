@@ -63,14 +63,14 @@
       {
         "name": "Business Wire",
         "domain": "businesswire.com",
-        "tier": 1,
-        "why": "회사 공식 보도자료 원문"
+        "tier": 3,
+        "why": "회사 배포 보도자료, 본문 확인 시에만 사용"
       },
       {
         "name": "PR Newswire",
         "domain": "prnewswire.com",
-        "tier": 1,
-        "why": "회사 공식 보도자료 원문"
+        "tier": 3,
+        "why": "회사 배포 보도자료, 본문 확인 시에만 사용"
       },
       {
         "name": "CNBC",

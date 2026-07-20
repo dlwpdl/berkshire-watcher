@@ -1,4 +1,39 @@
 {
+  "sector": "Consumer Defensive",
+  "subsector": "Non-Alcoholic Beverages / Concentrate",
+  "aliases": [
+    "The Coca-Cola Company"
+  ],
+  "themes": [
+    "organic revenue",
+    "unit case volume",
+    "price/mix",
+    "concentrate sales",
+    "operating margin",
+    "market share",
+    "currency impact",
+    "marketing investment"
+  ],
+  "sector_cycle": {
+    "why": "KO는 글로벌 브랜드와 농축액 중심 모델로 가격결정력이 높지만, 소비자 구매력, 지역별 물량, 환율, 원재료비, 마케팅 투자가 성장과 마진을 좌우합니다.",
+    "positive": [
+      "가격 인상과 판매량 성장이 함께 나타남",
+      "시장점유율과 무설탕·신제품 수요 확대",
+      "유기적 매출 성장과 영업마진 개선"
+    ],
+    "negative": [
+      "가격 인상 뒤 판매량 감소",
+      "원재료비·환율 부담으로 마진 축소",
+      "브랜드 투자에도 시장점유율 하락"
+    ],
+    "watch": [
+      "organic revenue growth",
+      "unit case volume",
+      "price mix",
+      "comparable operating margin",
+      "NARTD value share"
+    ]
+  },
   "source_groups": [
     "official_filings",
     "market_news",
@@ -13,18 +48,106 @@
       "why": "회사 공식 발표/IR"
     }
   ],
+  "why_it_matters": "KO의 핵심은 브랜드와 유통망을 이용해 가격을 올리면서도 판매량과 시장점유율을 지키는지입니다. 유기적 매출이 price/mix에만 의존하지 않고 물량과 마진으로 이어져야 배당과 현금흐름의 질이 유지됩니다.",
   "watch_queries": [
     {
       "query": "Coca-Cola earnings organic revenue unit case volume",
-      "why": "가격과 물량이 같이 유지되는지 확인"
+      "why": "가격과 물량이 균형 있게 성장하는지 확인"
     },
     {
-      "query": "Coca-Cola pricing volume margins consumer staples",
-      "why": "가격 인상, 물량, 마진의 균형을 확인"
+      "query": "Coca-Cola price mix operating margin input costs",
+      "why": "가격결정력이 실제 마진 개선으로 이어지는지 확인"
     },
     {
-      "query": "Coca-Cola marketing spend beverage demand",
-      "why": "브랜드 투자와 음료 수요 흐름을 확인"
+      "query": "Coca-Cola market share Zero Sugar beverage demand",
+      "why": "브랜드와 제품 혁신이 점유율을 높이는지 확인"
+    },
+    {
+      "query": "Coca-Cola currency impact guidance free cash flow",
+      "why": "환율과 현금흐름이 연간 전망에 미치는 영향을 확인"
+    }
+  ],
+  "positive_triggers": [
+    "organic revenue grew",
+    "unit case volume grew",
+    "price/mix grew",
+    "operating margin expansion",
+    "gained value share",
+    "raises guidance",
+    "market share gain"
+  ],
+  "negative_triggers": [
+    "organic revenue declined",
+    "unit case volume declined",
+    "price/mix declined",
+    "operating margin declined",
+    "lost value share",
+    "currency headwind",
+    "higher input costs",
+    "cuts guidance",
+    "product recall"
+  ],
+  "chain": [
+    {
+      "from": "브랜드·패키지·채널별 가격 전략",
+      "to": "price/mix와 유기적 매출",
+      "why": "소비자가 받아들일 수 있는 가격과 제품 구성을 만들면 인플레이션을 넘는 매출 성장이 가능합니다."
+    },
+    {
+      "from": "소비자 모집·혁신·보틀러 실행",
+      "to": "판매량과 시장점유율",
+      "why": "가격 인상만이 아니라 실제 음료 소비와 점유율이 늘어야 장기 브랜드 성장이 확인됩니다."
+    },
+    {
+      "from": "원재료비·환율·마케팅 투자",
+      "to": "영업마진과 현금흐름",
+      "why": "매출이 늘어도 투입비용과 환율 부담이 더 크면 이익과 배당 여력이 약해질 수 있습니다."
+    }
+  ],
+  "related_tickers": [
+    {
+      "ticker": "PEP",
+      "name": "PepsiCo",
+      "tradingview_symbol": "NASDAQ-PEP",
+      "why": "글로벌 음료 브랜드의 물량·가격 전략을 비교하는 가장 직접적인 경쟁사입니다."
+    },
+    {
+      "ticker": "KDP",
+      "name": "Keurig Dr Pepper",
+      "tradingview_symbol": "NASDAQ-KDP",
+      "why": "북미 음료 수요와 가격 경쟁을 비교합니다."
+    },
+    {
+      "ticker": "MNST",
+      "name": "Monster Beverage",
+      "tradingview_symbol": "NASDAQ-MNST",
+      "why": "에너지음료 성장과 Coca-Cola 유통망의 시너지를 확인합니다."
+    },
+    {
+      "ticker": "CCEP",
+      "name": "Coca-Cola Europacific Partners",
+      "tradingview_symbol": "NASDAQ-CCEP",
+      "why": "보틀러의 판매량, 가격, 원가 흐름을 통해 시스템 실행력을 확인합니다."
+    }
+  ],
+  "key_indicators": [
+    {
+      "name": "유기적 매출의 물량·price/mix 구성",
+      "why": "성장이 실제 소비 증가인지 가격 인상 의존인지 구분합니다.",
+      "positive": "unit case volume과 price/mix가 함께 플러스면 가장 질 좋은 성장입니다.",
+      "negative": "가격은 오르지만 물량과 점유율이 떨어지면 브랜드 탄력성을 다시 봐야 합니다."
+    },
+    {
+      "name": "비교가능 영업마진과 통화중립 영업이익",
+      "why": "가격결정력이 원재료비, 환율, 마케팅 비용을 이기는지 보여줍니다.",
+      "positive": "유기적 매출 성장과 마진 확대가 같이 나오면 현금창출력이 강화됩니다.",
+      "negative": "투입비용과 환율 부담으로 마진이 축소되면 성장의 질이 낮아집니다."
+    },
+    {
+      "name": "시장점유율과 자유현금흐름",
+      "why": "브랜드 경쟁력과 배당 재원을 함께 확인합니다.",
+      "positive": "NARTD 가치점유율과 자유현금흐름이 함께 늘면 장기 보유 논리가 강해집니다.",
+      "negative": "점유율 하락이나 일회성 비용을 제외한 현금흐름 약화가 지속되면 다시 봐야 합니다."
     }
   ]
 }

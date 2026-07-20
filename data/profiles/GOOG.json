@@ -2,6 +2,9 @@
   "template": "bigtech_ai",
   "sector": "Communication Services",
   "subsector": "Internet Content & Information / AI Cloud",
+  "aliases": [
+    "Google"
+  ],
   "themes": [
     "search advertising",
     "AI search",

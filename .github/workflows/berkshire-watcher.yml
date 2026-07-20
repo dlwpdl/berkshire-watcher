@@ -18,6 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/cache@v4
+        with:
+          path: state/seen.json
+          key: berkshire-watcher-seen-${{ github.run_id }}
+          restore-keys: |
+            berkshire-watcher-seen-
       - uses: actions/setup-node@v5
         with:
           node-version: "24"

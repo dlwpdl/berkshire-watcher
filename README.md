@@ -109,13 +109,17 @@ CRCL은 일시중지.
 
 ## Sources
 
-기본 수집은 Google News RSS이고, 접근 가능한 기사 URL은 원문 HTML 본문을 읽어 점수와 내용 요약에 반영합니다. 유료벽/차단/본문 추출 실패 기사는 기본적으로 알림 후보에서 제외합니다.
+기본 수집은 Google News RSS이고, Google 링크를 원문 URL로 해제한 뒤 접근 가능한 HTML 본문을 읽어 내용 요약에 반영합니다. 회사 종목은 회사명/티커가 직접 확인된 기사만, 레버리지 ETF는 등록된 섹터 트리거가 확인된 기사만 사용합니다.
 
 `MINIMAX_API_KEY`가 있으면 NVIDIA OpenAI 호환 endpoint의 `minimaxai/minimax-m3`로 본문 기반 한국어 요약/번역을 만들고, 없으면 기존 Google 번역 fallback을 사용합니다. 필요하면 `MINIMAX_API_URL`, `MINIMAX_MODEL`, `MAX_ARTICLE_FETCHES`로 조정합니다.
 
-기본값은 `REQUIRE_ARTICLE_BODY=1`입니다. 본문을 확보하지 못한 기사는 알림 후보에서 제외합니다. 임시 디버깅 때만 `REQUIRE_ARTICLE_BODY=0`으로 제목/RSS 요약 기반 알림을 허용합니다.
+`REQUIRE_ARTICLE_BODY=1`을 지정하면 본문을 확보한 기사만 허용합니다. 기본값은 `0`이며, 이때도 본문 없는 기사는 등록된 tier 1~2 출처만 허용합니다. 미등록 출처와 tier 3 보도자료는 원문 본문이 있어야 후보가 됩니다.
 
 기본값은 `NEWS_MAX_AGE_HOURS=48`입니다. Google News RSS의 발행시각이 이 범위를 벗어난 기사는 오래된 뉴스로 보고 알림 후보에서 제외합니다.
+
+Telegram 전송이 성공하면 기사 키를 `state/seen.json`에 기록합니다. GitHub Actions는 이 파일을 캐시로 다음 실행에 복원해 같은 종목의 같은 기사를 다시 보내지 않습니다.
+
+알림의 `T1~T10`은 중요도이고, 색상은 방향입니다. 종목별 프로필 트리거만 중요도를 높이며 일반 호재/악재 표현은 초록·빨강·노랑·흰색 방향 판정에만 사용합니다.
 
 소스 관리는 종목마다 복사하지 않습니다. `data/sources.json`의 재사용 그룹을 템플릿이 고르고, 종목별 `trusted_sources`에는 회사 공식 IR/뉴스룸처럼 그 종목에만 붙는 원문 출처만 둡니다.
 

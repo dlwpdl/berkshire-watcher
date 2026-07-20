@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const DEFAULT_PORTFOLIO = 'data/portfolio.json';
 const DEFAULT_SOURCES = 'data/sources.json';
@@ -70,22 +71,28 @@ const GENERAL_NEGATIVE_TRIGGERS = [
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.selfTest) {
-    selfTest();
+    await selfTest();
     return;
+  }
+  if (!args.dryRun && (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID)) {
+    throw new Error('TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are required unless --dry-run is used.');
   }
 
   const portfolio = await readJson(args.portfolio || DEFAULT_PORTFOLIO);
   const items = await loadPortfolioItems(portfolio.items || []);
   const sources = await readOptionalJson(args.sources || DEFAULT_SOURCES, { groups: {} });
+  const statePath = process.env.ALERT_STATE_FILE || 'state/seen.json';
+  const seen = args.dryRun ? new Set() : await loadSeen(statePath);
   const events = args.events
     ? await readJson(args.events)
     : await collectEvents(items, sources);
 
   const alerts = (await Promise.all(items
     .filter(item => item.status !== 'paused')
-    .map(item => analyzeItem(item, events, sources))))
+    .map(item => analyzeItem(item, events, sources, seen))))
     .filter(Boolean)
     .sort((a, b) => b.score - a.score);
+  console.log(`[alerts] selected=${alerts.length} body=${alerts.filter(alert => alert.matches.content === 'article_body').length} rss=${alerts.filter(alert => alert.matches.content === 'rss_summary').length} title=${alerts.filter(alert => alert.matches.content === 'title_only').length}`);
 
   if (alerts.length === 0) {
     console.log('No portfolio alerts.');
@@ -95,8 +102,10 @@ async function main() {
   const message = (await Promise.all(alerts.map(formatAlert))).join('\n\n---\n\n');
   console.log(message);
 
-  if (!args.dryRun && process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
+  if (!args.dryRun) {
     await sendTelegram(message);
+    for (const alert of alerts) seen.add(alertKey(alert.item, alert.event));
+    await saveSeen(statePath, seen);
   }
 }
 
@@ -123,6 +132,25 @@ async function readOptionalJson(path, fallback) {
     if (error.code === 'ENOENT') return fallback;
     throw error;
   }
+}
+
+async function loadSeen(statePath) {
+  const state = await readOptionalJson(statePath, { seen: [] });
+  return new Set(Array.isArray(state.seen) ? state.seen : []);
+}
+
+async function saveSeen(statePath, seen) {
+  await fs.mkdir(path.dirname(statePath), { recursive: true });
+  await fs.writeFile(statePath, `${JSON.stringify({ seen: [...limitSeen(seen)] }, null, 2)}\n`);
+}
+
+function limitSeen(seen, max = 1000) {
+  return new Set([...seen].slice(-max));
+}
+
+function alertKey(item, event) {
+  const identity = event.discoveryUrl || event.url || `${normalize(event.title)}|${normalize(event.source)}`;
+  return `${item.ticker}|${identity}`;
 }
 
 async function loadPortfolioItems(items) {
@@ -161,22 +189,37 @@ function isPlainObject(value) {
 
 async function collectEvents(items, sources) {
   const all = [];
+  let queryCount = 0;
+  let queryFailures = 0;
 
   for (const item of items.filter(item => item.status !== 'paused')) {
     const queries = buildQueries(item, sources).slice(0, Number(process.env.MAX_QUERIES_PER_ITEM || 12));
     for (const query of queries) {
+      queryCount += 1;
       const events = await fetchGoogleNews(query.query);
+      if (events === null) {
+        queryFailures += 1;
+        continue;
+      }
       all.push(...events.map(event => ({
         ...event,
         portfolioTicker: item.ticker,
         query: query.query,
-        querySource: query.source || null,
       })));
       await sleep(300);
     }
   }
 
-  return enrichEvents(recentEvents(dedupeEvents(all)).slice(0, 80));
+  if (queryCount > 0 && queryFailures === queryCount) {
+    throw new Error(`All ${queryCount} Google News queries failed.`);
+  }
+
+  const recent = recentEvents(dedupeEvents(all)).slice(0, 80);
+  const enriched = await enrichEvents(recent);
+  const resolvedCount = enriched.filter(event => event.discoveryUrl && event.url !== event.discoveryUrl).length;
+  const bodyCount = enriched.filter(event => event.body).length;
+  console.log(`[news] queries=${queryCount} failed=${queryFailures} recent=${recent.length} resolved=${resolvedCount} bodies=${bodyCount}`);
+  return enriched;
 }
 
 function buildQueries(item, sources) {
@@ -228,12 +271,12 @@ async function fetchGoogleNews(query) {
     });
   } catch (error) {
     console.warn(`Google News fetch failed for "${query}": ${error.message}`);
-    return [];
+    return null;
   }
 
   if (!response.ok) {
     console.warn(`Google News fetch failed for "${query}": ${response.status}`);
-    return [];
+    return null;
   }
 
   return parseRss(await response.text());
@@ -259,11 +302,19 @@ async function enrichEvents(events) {
 async function enrichEvent(event) {
   try {
     const articleUrl = await resolveArticleUrl(event.url);
-    const body = articleUrl ? await fetchArticleText(articleUrl) : '';
-    return { ...event, url: articleUrl || event.url, articleChecked: true, ...(body ? { body } : {}) };
+    const body = articleUrl && !domainFromUrl(articleUrl).endsWith('news.google.com')
+      ? await fetchArticleText(articleUrl)
+      : '';
+    return {
+      ...event,
+      discoveryUrl: event.discoveryUrl || event.url,
+      url: articleUrl || event.url,
+      articleChecked: true,
+      ...(body ? { body } : {}),
+    };
   } catch (error) {
     console.warn(`Article fetch failed for "${event.title}": ${error.message}`);
-    return { ...event, articleChecked: true };
+    return { ...event, discoveryUrl: event.discoveryUrl || event.url, articleChecked: true };
   }
 }
 
@@ -286,29 +337,7 @@ async function resolveArticleUrl(url) {
 }
 
 async function decodeGoogleNewsUrl(articleId, timestamp, signature) {
-  const rpc = JSON.stringify([[[
-    'Fbv4je',
-    JSON.stringify([
-      'garturlreq',
-      [['en-US', 'US', ['FINANCE_TOP_INDICES', 'WEB_TEST_1_0_0'], null, null, 1, 1, 'US:en', null, 180, null, null, null, null, null, 0, null, null, [1608992183, 723341000]]],
-      'en-US',
-      'US',
-      1,
-      [2, 3, 4, 8],
-      1,
-      0,
-      '655000234',
-      0,
-      0,
-      null,
-      0,
-      articleId,
-      Number(timestamp),
-      signature,
-    ]),
-    null,
-    'generic',
-  ]]]);
+  const rpc = buildGoogleNewsDecodePayload(articleId, timestamp, signature);
 
   const response = await fetch('https://news.google.com/_/DotsSplashUi/data/batchexecute?rpcids=Fbv4je', {
     method: 'POST',
@@ -327,6 +356,20 @@ async function decodeGoogleNewsUrl(articleId, timestamp, signature) {
   return result[1] || '';
 }
 
+function buildGoogleNewsDecodePayload(articleId, timestamp, signature) {
+  const request = [
+    'garturlreq',
+    [
+      ['X', 'X', ['X', 'X'], null, null, 1, 1, 'US:en', null, 1, null, null, null, null, null, 0, 1],
+      'X', 'X', 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0,
+    ],
+    articleId,
+    Number(timestamp),
+    signature,
+  ];
+  return JSON.stringify([[['Fbv4je', JSON.stringify(request), null, 'generic']]]);
+}
+
 async function fetchArticleText(url) {
   const response = await fetch(url, {
     headers: { 'User-Agent': USER_AGENT },
@@ -334,7 +377,8 @@ async function fetchArticleText(url) {
   });
   if (!response.ok || !response.headers.get('content-type')?.includes('text/html')) return '';
 
-  return extractArticleText(await response.text());
+  const text = extractArticleText(await response.text());
+  return isUsableArticleText(text) ? text : '';
 }
 
 function extractArticleText(html) {
@@ -363,6 +407,10 @@ function isArticleParagraph(text) {
   return value.length >= 40
     && !/^(advertisement|subscribe|sign up|by submitting|all rights reserved)\b/i.test(value)
     && !/(privacy policy|cookie policy|terms of service)/i.test(value);
+}
+
+function isUsableArticleText(text) {
+  return String(text || '').trim().length >= 160;
 }
 
 function parseRss(xml) {
@@ -401,22 +449,25 @@ function isRecentEvent(event, now = Date.now()) {
     && now - published <= maxAgeHours * 60 * 60 * 1000;
 }
 
-async function analyzeItem(item, events, sources) {
+async function analyzeItem(item, events, sources, seen = new Set()) {
   const minScore = Number(process.env.MIN_T_SCORE || 5);
   const scored = events
     .filter(event => !isLikelyNonNewsEvent(event))
-    .filter(event => event.portfolioTicker === item.ticker || eventMatchesItem(event, item))
+    .filter(event => eventMatchesItem(event, item))
     .map(event => scoreEvent(item, event, sources))
     .sort((a, b) => b.score - a.score);
 
   if (scored.length === 0) return null;
 
   for (const candidate of scored) {
+    if (seen.has(alertKey(item, candidate.event))) continue;
     let top = candidate;
     if (top.matches.content !== 'article_body' && !top.event.articleChecked) {
       const enriched = await enrichEvent(top.event);
       if (enriched !== top.event) top = scoreEvent(item, enriched, sources);
     }
+    if (isLikelyNonNewsEvent(top.event)) continue;
+    if (top.matches.content !== 'article_body' && (!top.matches.source || top.matches.source.tier > 2)) continue;
     if (top.score < minScore) continue;
     if (articleBodyRequired() && top.matches.content !== 'article_body') continue;
 
@@ -434,77 +485,94 @@ async function analyzeItem(item, events, sources) {
 }
 
 function eventMatchesItem(event, item) {
+  if (directMatchForItem(item, normalize(eventIdentityText(event)))) return true;
+  if (item.sector !== 'Leveraged ETF') return false;
+
   const text = normalize(eventContentText(event));
-  return (!isAmbiguousTicker(item) && tickerInText(item.ticker, text))
-    || [item.name, ...(item.themes || [])]
+  const triggerMatches = matchList([
+    ...(item.positive_triggers || []),
+    ...(item.negative_triggers || []),
+  ], text);
+  const themeMatches = matchList(item.themes || [], text);
+  return triggerMatches.length > 0 || themeMatches.length >= 2;
+}
+
+function directMatchForItem(item, text) {
+  if (!isAmbiguousTicker(item) && tickerInText(item.ticker, text)) return true;
+
+  const identityText = normalize(text).replace(/[^a-z0-9]+/g, ' ').trim();
+  return [item.name, ...(item.aliases || [])]
     .filter(Boolean)
-    .some(value => text.includes(normalize(value)));
+    .map(name => normalize(name).replace(/[^a-z0-9]+/g, ' ').trim())
+    .some(name => name.length >= 4 && phraseInText(name, identityText));
 }
 
 function scoreEvent(item, event, sources) {
   const text = normalize(eventContentText(event));
+  const itemPositiveMatches = matchList(item.positive_triggers || [], text);
+  const itemNegativeMatches = matchList(item.negative_triggers || [], text);
+  const generalPositiveMatches = matchPhrases(GENERAL_POSITIVE_TRIGGERS, text);
+  const generalNegativeMatches = matchPhrases(GENERAL_NEGATIVE_TRIGGERS, text);
   const positiveMatches = uniqueBy([
-    ...matchList(item.positive_triggers || [], text),
-    ...matchPhrases(GENERAL_POSITIVE_TRIGGERS, text),
+    ...itemPositiveMatches,
+    ...generalPositiveMatches,
   ], value => value);
   const negativeMatches = uniqueBy([
-    ...matchList(item.negative_triggers || [], text),
-    ...matchPhrases(GENERAL_NEGATIVE_TRIGGERS, text),
+    ...itemNegativeMatches,
+    ...generalNegativeMatches,
   ], value => value);
+  const materialMatches = uniqueBy([...itemPositiveMatches, ...itemNegativeMatches], value => value);
   const themeMatches = (item.themes || []).filter(theme => text.includes(normalize(theme)));
   const sectorMatches = [item.sector, item.subsector, ...(item.sector_cycle?.watch || [])]
     .filter(Boolean)
     .filter(value => text.includes(normalize(value)));
-  const directMatch = (!isAmbiguousTicker(item) && tickerInText(item.ticker, text))
-    || (item.name ? text.includes(normalize(item.name)) : false);
-  const queryMatch = event.query ? 1 : 0;
-  const source = event.querySource || findKnownSource(event, item, sources);
+  const directMatch = directMatchForItem(item, normalize(eventIdentityText(event)));
+  const source = findKnownSource(event, item, sources);
   const quality = contentQuality(event);
 
-  let score = 1 + queryMatch;
+  let score = 1;
   if (directMatch) score += 4;
-  score += Math.min(themeMatches.length, 2) * 2;
-  score += Math.min(sectorMatches.length, 1) * 2;
-  score += Math.min(positiveMatches.length + negativeMatches.length, 2) * 3;
-  score += source?.tier === 1 ? 2 : source?.tier === 2 ? 1 : 0;
+  score += Math.min(materialMatches.length, 2) * 2;
+  score += Math.min(themeMatches.length, 2);
+  score += Math.min(sectorMatches.length, 1);
+  if (source?.tier <= 2) score += 1;
 
-  const direction = classifyDirection(positiveMatches.length, negativeMatches.length);
-  const signalCount = positiveMatches.length + negativeMatches.length;
-  const cappedScore = quality === 'title_only'
-    ? Math.min(score, titleOnlyMaxScore(source, signalCount))
-    : score;
+  const direction = classifyDirection(
+    itemPositiveMatches.length * 2 + generalPositiveMatches.length,
+    itemNegativeMatches.length * 2 + generalNegativeMatches.length,
+  );
 
   return {
     event,
-    score: Math.min(10, cappedScore),
+    score: Math.min(10, score),
     direction,
     matches: {
       positive: positiveMatches,
       negative: negativeMatches,
+      material: materialMatches,
       themes: themeMatches,
       sectors: sectorMatches,
+      direct: directMatch,
       source,
       content: quality,
     },
   };
 }
 
-function titleOnlyMaxScore(source, signalCount) {
-  if (!source) return signalCount ? 6 : 5;
-  return signalCount ? 8 : 6;
+function eventContentText(event) {
+  return [eventIdentityText(event), String(event.body || '').trim()].filter(Boolean).join(' ');
 }
 
-function eventContentText(event) {
+function eventIdentityText(event) {
   const title = cleanNewsText(event.title, event.source);
   const summary = cleanNewsText(event.summary, event.source);
-  const body = String(event.body || '').trim();
-  return [title, isSameNewsText(title, summary) ? '' : summary, body].filter(Boolean).join(' ');
+  return [title, isSameNewsText(title, summary) ? '' : summary].filter(Boolean).join(' ');
 }
 
 function contentQuality(event) {
   const title = cleanNewsText(event.title, event.source);
   const summary = cleanNewsText(event.summary, event.source);
-  if (event.body) return 'article_body';
+  if (isUsableArticleText(event.body)) return 'article_body';
   if (!summary || isSameNewsText(title, summary)) return 'title_only';
   return 'rss_summary';
 }
@@ -516,8 +584,9 @@ function articleBodyRequired() {
 function isLikelyNonNewsEvent(event) {
   const title = cleanNewsText(event.title, event.source);
   const summary = cleanNewsText(event.summary, event.source);
-  const text = normalize([title, summary].filter(Boolean).join(' '));
+  const text = normalize([title, summary, event.body].filter(Boolean).join(' '));
   return /\bprice,\s+[^-]+,\s+live charts?,\s+and marketcap\b/i.test(title)
+    || /(sponsored content|paid content|paid post|advertorial|partner content|promoted content|유료 광고|광고성 콘텐츠|협찬 콘텐츠)/.test(text)
     || isLikelyPromotionalCampaign(text);
 }
 
@@ -538,8 +607,8 @@ function findKnownSource(event, item, sources) {
   return knownSources.find(source => {
     const sourceName = normalize(source.name);
     const sourceDomain = normalize(source.domain);
-    return sourceDomain && eventDomain.includes(sourceDomain)
-      || sourceName && eventSource.includes(sourceName);
+    return sourceDomain && (eventDomain === sourceDomain || eventDomain.endsWith(`.${sourceDomain}`))
+      || sourceName && eventSource === sourceName;
   });
 }
 
@@ -562,9 +631,9 @@ function phraseInText(phrase, text) {
 }
 
 function classifyDirection(positiveCount, negativeCount) {
-  if (positiveCount > 0 && negativeCount > 0) return 'mixed';
-  if (positiveCount > 0) return 'positive';
-  if (negativeCount > 0) return 'negative';
+  if (positiveCount > 0 && negativeCount > 0 && Math.abs(positiveCount - negativeCount) < 2) return 'mixed';
+  if (positiveCount > negativeCount) return 'positive';
+  if (negativeCount > positiveCount) return 'negative';
   return 'unknown';
 }
 
@@ -605,7 +674,7 @@ async function formatAlert(alert) {
     : translatedSummary;
 
   return [
-    `${icon} T${score}/10 · ${escapeHtml(title)} · ${directionLabel} · ${action}`,
+    `${icon} 중요도 T${score}/10 · ${escapeHtml(title)} · ${directionLabel} · ${action}`,
     '',
     `<b>제목</b>\n${escapeHtml(translatedTitle)}`,
     '',
@@ -636,7 +705,12 @@ function fallbackSummary(alert) {
 }
 
 function summarizeArticleBody(body) {
-  const text = String(body || '').replace(/\s+/g, ' ').trim();
+  const paragraphs = String(body || '').split(/\n+/)
+    .map(paragraph => paragraph.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+  if (paragraphs.length > 1) return truncateText(paragraphs.slice(0, 3).join(' '), 900);
+
+  const text = paragraphs[0] || '';
   const sentences = text.match(/[^.!?。！？]+[.!?。！？]+(?=\s|$)/g) || [];
   return truncateText((sentences.slice(0, 3).map(sentence => sentence.trim()).join(' ') || text), 900);
 }
@@ -738,6 +812,8 @@ function formatEventSource(event, source) {
 
 function formatAnalysisFactors(matches) {
   const lines = [];
+  lines.push(matches.direct ? '- 관련성: 종목 직접 언급' : '- 관련성: 등록된 ETF 요인 일치');
+  if (matches.material?.length) lines.push(`- 중요도 트리거: ${escapeHtml(matches.material.slice(0, 3).join(' / '))}`);
   if (matches.positive?.length) lines.push(`- 긍정: ${escapeHtml(matches.positive.slice(0, 3).join(' / '))}`);
   if (matches.negative?.length) lines.push(`- 부정: ${escapeHtml(matches.negative.slice(0, 3).join(' / '))}`);
   if (matches.themes?.length) lines.push(`- 테마: ${escapeHtml(matches.themes.slice(0, 3).join(' / '))}`);
@@ -835,7 +911,8 @@ function judgementSentence(item, direction, action) {
 }
 
 async function sendTelegram(text) {
-  for (const chunk of splitMessage(text)) {
+  const chunks = splitMessage(text);
+  for (const chunk of chunks) {
     const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -845,12 +922,14 @@ async function sendTelegram(text) {
         parse_mode: 'HTML',
         link_preview_options: { is_disabled: true },
       }),
+      signal: AbortSignal.timeout(Number(process.env.TELEGRAM_TIMEOUT_MS || 10000)),
     });
 
     if (!response.ok) {
       throw new Error(`Telegram API error ${response.status}: ${await response.text()}`);
     }
   }
+  console.log(`[telegram] chunks=${chunks.length}`);
 }
 
 function tradingViewUrl(entry) {
@@ -918,7 +997,7 @@ function decodeXml(text) {
 }
 
 function stripHtml(text) {
-  return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  return decodeXml(decodeXml(text.replace(/<[^>]*>/g, ' '))).replace(/\s+/g, ' ').trim();
 }
 
 function truncateText(text, max) {
@@ -963,15 +1042,22 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function selfTest() {
+async function selfTest() {
   const html = '<main><p>Short.</p><p>Nvidia said the new chip orders reached one billion dollars. The company added that customer testing has started. Investors are watching whether inference costs fall.</p></main>';
   const body = extractArticleText(html);
   assert.match(body, /new chip orders/);
+  assert.equal(isUsableArticleText('A short navigation fragment that is not an article body.'), false);
+  assert.equal(isUsableArticleText('A'.repeat(200)), true);
   assert.equal(contentQuality({ title: 'Nvidia orders', summary: 'Nvidia orders', body }), 'article_body');
   assert.equal(
     summarizeArticleBody('First sentence. Second sentence. Third sentence. Fourth sentence.'),
     'First sentence. Second sentence. Third sentence.',
   );
+  assert.equal(
+    summarizeArticleBody('NEW YORK, 12:07 p.m. EDT - U.S. trading begins.\nShares rose 1.2%.\nRevenue guidance increased.'),
+    'NEW YORK, 12:07 p.m. EDT - U.S. trading begins. Shares rose 1.2%. Revenue guidance increased.',
+  );
+  assert.equal(stripHtml('Alphabet&amp;#x27;s guidance'), "Alphabet's guidance");
   assert.match(formatSectorCycle({
     sector: 'Technology',
     sector_cycle: { positive: ['demand'], negative: ['slowdown'] },
@@ -1000,6 +1086,11 @@ function selfTest() {
     summary: 'The new product expands derivatives access for eligible US customers.',
     source: 'Coinbase',
   }), false);
+  assert.equal(isLikelyNonNewsEvent({
+    title: 'Robinhood expands its investing platform',
+    body: 'Sponsored content. Sign up today and use promo code INVEST to receive a cash bonus.',
+    source: 'Example Publisher',
+  }), true);
   const testSources = { groups: { market_news: [{ name: 'Reuters', domain: 'reuters.com', tier: 1 }] } };
   const googleWin = scoreEvent(
     { ticker: 'GOOG', name: 'Google', themes: ['Gemini'], source_groups: ['market_news'] },
@@ -1007,8 +1098,32 @@ function selfTest() {
     testSources,
   );
   assert.equal(googleWin.direction, 'positive');
-  assert.equal(googleWin.score, 8);
+  assert.equal(googleWin.score, 7);
   assert.equal(actionFor({ status: 'holding' }, googleWin.score, googleWin.direction, googleWin.matches), '호재 원문 확인');
+  const importanceItem = { ticker: 'GOOG', name: 'Alphabet', source_groups: ['market_news'] };
+  const neutralImportance = scoreEvent(
+    importanceItem,
+    { title: 'Alphabet updates its product roadmap', body: 'Alphabet described its product roadmap without changing financial guidance.', source: 'Reuters', sourceDomain: 'reuters.com' },
+    testSources,
+  );
+  const generalSentimentImportance = scoreEvent(
+    importanceItem,
+    { title: 'Alphabet wins an industry award', body: 'Alphabet won an industry award for a recently released product.', source: 'Reuters', sourceDomain: 'reuters.com' },
+    testSources,
+  );
+  assert.equal(generalSentimentImportance.score, neutralImportance.score);
+  assert.equal(generalSentimentImportance.direction, 'positive');
+  const profileSignalImportance = scoreEvent(
+    { ...importanceItem, positive_triggers: ['raises guidance'] },
+    { title: 'Alphabet raises guidance as demand improves', body: 'Alphabet raised its financial guidance as customer demand improved.', source: 'Reuters', sourceDomain: 'reuters.com' },
+    testSources,
+  );
+  assert.ok(profileSignalImportance.score > generalSentimentImportance.score);
+  assert.equal(scoreEvent(
+    { ...importanceItem, positive_triggers: ['raises guidance'] },
+    { title: 'Alphabet raises guidance despite shares falling', body: 'Alphabet raised guidance while its shares continued falling.', source: 'Reuters', sourceDomain: 'reuters.com' },
+    testSources,
+  ).direction, 'positive');
   const nvidiaLimited = scoreEvent(
     { ticker: 'NVDA', name: 'Nvidia', source_groups: ['market_news'] },
     { title: 'China plans to allow top AI firms to buy limited quantities of Nvidia H200 chips', summary: 'China plans to allow top AI firms to buy limited quantities of Nvidia H200 chips', source: 'Reuters', sourceDomain: 'reuters.com', query: 'Nvidia China' },
@@ -1040,6 +1155,104 @@ function selfTest() {
   assert.equal(eventMatchesItem({ title: 'Ko Du-shim recalls an actor' }, { ticker: 'KO', name: 'Coca-Cola' }), false);
   assert.equal(eventMatchesItem({ title: 'Coca-Cola raises guidance' }, { ticker: 'KO', name: 'Coca-Cola' }), true);
   assert.equal(eventMatchesItem({ title: 'Markets open higher' }, { ticker: 'OPEN', ambiguous_ticker: true }), false);
+  assert.equal(eventMatchesItem({ title: 'Studios take a cautious view of summer releases' }, { ticker: 'TTWO', name: 'Take-Two Interactive' }), false);
+  assert.equal(eventMatchesItem({
+    title: 'Circle shares fall after an analyst downgrade',
+    summary: 'The stablecoin issuer faces more downside.',
+    body: 'The report briefly compares Circle with Coinbase and other crypto companies.',
+  }, { ticker: 'COIN', name: 'Coinbase' }), false);
+  const metaForGoogle = await analyzeItem(
+    { ticker: 'GOOG', name: 'Alphabet', themes: ['advertising'], positive_triggers: ['advertising growth'] },
+    [{
+      title: 'Meta Platforms stock rises on advertising growth',
+      summary: 'Meta Platforms stock rises on advertising growth',
+      source: 'Ad Hoc News',
+      sourceDomain: 'ad-hoc-news.de',
+      portfolioTicker: 'GOOG',
+      query: 'Alphabet advertising growth',
+      articleChecked: true,
+    }],
+    testSources,
+  );
+  assert.equal(metaForGoogle, null);
+  const chipForHealthcare = await analyzeItem(
+    { ticker: 'CURE', name: 'Direxion Daily Healthcare Bull 3X Shares', sector: 'Leveraged ETF', themes: ['healthcare sector'], positive_triggers: ['healthcare rally'] },
+    [{
+      title: 'Chip stocks fall as investors question the AI rally',
+      summary: 'Chip stocks fall as investors question the AI rally',
+      source: 'Reuters',
+      sourceDomain: 'reuters.com',
+      portfolioTicker: 'CURE',
+      query: 'healthcare sector rally',
+      articleChecked: true,
+    }],
+    testSources,
+  );
+  assert.equal(chipForHealthcare, null);
+  const unknownHeadline = await analyzeItem(
+    { ticker: 'GOOG', name: 'Alphabet', positive_triggers: ['raises guidance'] },
+    [{
+      title: 'Alphabet raises guidance',
+      summary: 'Alphabet raises guidance',
+      source: 'Ad Hoc News',
+      sourceDomain: 'ad-hoc-news.de',
+      portfolioTicker: 'GOOG',
+      query: 'Alphabet earnings',
+      articleChecked: true,
+    }],
+    testSources,
+  );
+  assert.equal(unknownHeadline, null);
+  const unknownRssSummary = await analyzeItem(
+    { ticker: 'GOOG', name: 'Alphabet', positive_triggers: ['raises guidance'] },
+    [{
+      title: 'Alphabet raises guidance',
+      summary: 'The publisher says Alphabet raised its outlook after the quarter.',
+      source: 'Ad Hoc News',
+      sourceDomain: 'ad-hoc-news.de',
+      portfolioTicker: 'GOOG',
+      query: 'Alphabet earnings',
+      articleChecked: true,
+    }],
+    testSources,
+  );
+  assert.equal(unknownRssSummary, null);
+  assert.equal(findKnownSource(
+    { source: 'Fake Reuters', sourceDomain: 'fakereuters.com' },
+    { source_groups: ['market_news'] },
+    testSources,
+  ), undefined);
+  const duplicateItem = { ticker: 'GOOG', name: 'Alphabet', positive_triggers: ['raises guidance'], source_groups: ['market_news'] };
+  const duplicateEvent = {
+    title: 'Alphabet raises guidance',
+    summary: 'Alphabet raises guidance',
+    source: 'Reuters',
+    sourceDomain: 'reuters.com',
+    url: 'https://reuters.com/alphabet-guidance',
+    query: 'Alphabet earnings',
+    articleChecked: true,
+  };
+  const nextEvent = {
+    title: 'Alphabet announces cloud expansion',
+    summary: 'Alphabet announces cloud expansion',
+    source: 'Reuters',
+    sourceDomain: 'reuters.com',
+    url: 'https://reuters.com/alphabet-cloud',
+    query: 'Alphabet cloud',
+    articleChecked: true,
+  };
+  const nextAlert = await analyzeItem(
+    duplicateItem,
+    [duplicateEvent, nextEvent],
+    testSources,
+    new Set([alertKey(duplicateItem, duplicateEvent)]),
+  );
+  assert.equal(nextAlert.event.url, nextEvent.url);
+  assert.deepEqual([...limitSeen(new Set(['a', 'b', 'c']), 2)], ['b', 'c']);
+  const decodePayload = JSON.parse(buildGoogleNewsDecodePayload('article-id', '123', 'signature'));
+  const decodeRequest = JSON.parse(decodePayload[0][0][1]);
+  assert.equal(decodeRequest[0], 'garturlreq');
+  assert.deepEqual(decodeRequest.slice(2), ['article-id', 123, 'signature']);
 }
 
 main().catch(error => {
