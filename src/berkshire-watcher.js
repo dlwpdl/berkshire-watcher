@@ -54,6 +54,7 @@ const GENERAL_NEGATIVE_TRIGGERS = [
   'falls',
   'drops',
   'decline',
+  'softer',
   'downgrade',
   'recall',
   '피소',
@@ -638,6 +639,7 @@ function classifyDirection(positiveCount, negativeCount) {
 }
 
 function actionFor(item, score, direction, matches = {}) {
+  if (!matches.source || matches.source.tier > 2) return '출처 확인';
   if (matches.content === 'title_only' && direction === 'positive') return '호재 원문 확인';
   if (matches.content === 'title_only' && direction === 'negative') return '악재 원문 확인';
   if (matches.content === 'title_only' && direction === 'mixed') return '혼재 원문 확인';
@@ -818,7 +820,12 @@ function formatAnalysisFactors(matches) {
   if (matches.negative?.length) lines.push(`- 부정: ${escapeHtml(matches.negative.slice(0, 3).join(' / '))}`);
   if (matches.themes?.length) lines.push(`- 테마: ${escapeHtml(matches.themes.slice(0, 3).join(' / '))}`);
   if (matches.sectors?.length) lines.push(`- 섹터: ${escapeHtml(matches.sectors.slice(0, 2).join(' / '))}`);
-  if (matches.source?.name) lines.push(`- 출처신뢰: ${escapeHtml(matches.source.name)} tier ${escapeHtml(matches.source.tier || '?')}`);
+  if (matches.source?.name) {
+    const warning = matches.source.tier > 2 ? ' · 교차확인 필요' : '';
+    lines.push(`- 출처신뢰: ${escapeHtml(matches.source.name)} tier ${escapeHtml(matches.source.tier || '?')}${warning}`);
+  } else {
+    lines.push('- 출처신뢰: 미등록 · 교차확인 필요');
+  }
   if (matches.content === 'title_only') lines.push('- 본문: 제목 중심이라 원문 확인 필요');
   if (matches.content === 'rss_summary') lines.push('- 본문: RSS 요약 반영');
   if (matches.content === 'article_body') lines.push('- 본문: 원문 본문 반영');
@@ -1100,6 +1107,36 @@ async function selfTest() {
   assert.equal(googleWin.direction, 'positive');
   assert.equal(googleWin.score, 7);
   assert.equal(actionFor({ status: 'holding' }, googleWin.score, googleWin.direction, googleWin.matches), '호재 원문 확인');
+  assert.equal(actionFor(
+    { status: 'holding' },
+    7,
+    'positive',
+    { content: 'article_body' },
+  ), '출처 확인');
+  assert.equal(actionFor(
+    { status: 'holding' },
+    7,
+    'positive',
+    { content: 'article_body', source: { tier: 3 } },
+  ), '출처 확인');
+  assert.equal(actionFor(
+    { status: 'holding' },
+    7,
+    'positive',
+    { content: 'article_body', source: { tier: 2 } },
+  ), '보유 유지');
+  const hoodMixed = scoreEvent(
+    { ticker: 'HOOD', name: 'Robinhood', positive_triggers: ['trading volume increased'] },
+    {
+      title: 'Robinhood prediction-market revenue could overtake crypto',
+      body: 'Robinhood reported that trading volume increased from the prior month while crypto activity remained softer.',
+      source: 'Example Publisher',
+      sourceDomain: 'example.com',
+    },
+    testSources,
+  );
+  assert.equal(hoodMixed.direction, 'mixed');
+  assert.match(formatAnalysisFactors(hoodMixed.matches), /출처신뢰: 미등록/);
   const importanceItem = { ticker: 'GOOG', name: 'Alphabet', source_groups: ['market_news'] };
   const neutralImportance = scoreEvent(
     importanceItem,

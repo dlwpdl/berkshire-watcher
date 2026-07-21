@@ -113,7 +113,7 @@ CRCL은 일시중지.
 
 `MINIMAX_API_KEY`가 있으면 NVIDIA OpenAI 호환 endpoint의 `minimaxai/minimax-m3`로 본문 기반 한국어 요약/번역을 만들고, 없으면 기존 Google 번역 fallback을 사용합니다. 필요하면 `MINIMAX_API_URL`, `MINIMAX_MODEL`, `MAX_ARTICLE_FETCHES`로 조정합니다.
 
-`REQUIRE_ARTICLE_BODY=1`을 지정하면 본문을 확보한 기사만 허용합니다. 기본값은 `0`이며, 이때도 본문 없는 기사는 등록된 tier 1~2 출처만 허용합니다. 미등록 출처와 tier 3 보도자료는 원문 본문이 있어야 후보가 됩니다.
+`REQUIRE_ARTICLE_BODY=1`을 지정하면 본문을 확보한 기사만 허용합니다. 기본값은 `0`이며, 이때도 본문 없는 기사는 등록된 tier 1~2 출처만 허용합니다. 미등록 출처와 tier 3 보도자료는 원문 본문이 있어야 후보가 되며, 판단은 `출처 확인`으로 제한됩니다.
 
 기본값은 `NEWS_MAX_AGE_HOURS=48`입니다. Google News RSS의 발행시각이 이 범위를 벗어난 기사는 오래된 뉴스로 보고 알림 후보에서 제외합니다.
 

@@ -12,13 +12,20 @@
     "net interest income"
   ],
   "positive_triggers": [
-    "trading volume",
-    "net deposits",
-    "assets under custody"
+    "trading volume increased",
+    "trading volume growth",
+    "net deposits increased",
+    "net deposit growth",
+    "assets under custody increased",
+    "assets under custody growth"
   ],
   "negative_triggers": [
     "SEC enforcement",
     "crypto crackdown",
-    "payment for order flow ban"
+    "payment for order flow ban",
+    "trading volume decline",
+    "trading volume declined",
+    "net deposits declined",
+    "assets under custody declined"
   ]
 }

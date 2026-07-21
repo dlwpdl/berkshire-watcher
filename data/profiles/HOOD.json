@@ -62,18 +62,15 @@
     }
   ],
   "positive_triggers": [
-    "crypto volume",
-    "net deposits",
-    "assets under custody",
-    "Gold subscribers",
-    "international expansion",
-    "trading volume"
+    "crypto volume increased",
+    "crypto volume growth",
+    "Gold subscribers increased",
+    "Gold subscriber growth",
+    "international expansion"
   ],
   "negative_triggers": [
-    "SEC enforcement",
-    "payment for order flow ban",
-    "crypto crackdown",
-    "trading volume decline",
+    "crypto volume declined",
+    "Gold subscribers declined",
     "outage",
     "regulatory probe"
   ],
